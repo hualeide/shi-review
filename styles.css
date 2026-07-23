@@ -85,24 +85,22 @@ html, body {
   margin-top: 2px;
 }
 
-.simple-head {
-  padding: 12px 14px;
+.simple-meta {
+  padding: 10px 14px;
+  color: var(--muted);
+  font-size: 0.82rem;
   border-bottom: 1px solid var(--line);
   background: #161920;
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  align-items: center;
 }
 
 .simple-body {
-  padding: 18px 16px 22px;
+  padding: 14px 12px 18px;
   background: var(--chat-bg);
   flex: 1;
 }
 
 .simple-text {
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   font-size: 1.15rem;
   line-height: 1.65;
   white-space: pre-wrap;
@@ -116,10 +114,10 @@ html, body {
 
 .simple-media {
   width: 100%;
-  max-height: min(70vh, 720px);
+  max-height: min(72vh, 760px);
   object-fit: contain;
   background: #0a0c10;
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid var(--line);
 }
 

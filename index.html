@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
   <div class="app">
@@ -21,7 +21,7 @@
     </main>
 
     <section class="score-bar" id="scoreBar" hidden>
-      <p class="hint">整份聊天记录打一次分 · 1 差 → 5 好 · 自动下一条</p>
+      <p class="hint">1 差 → 5 好 · 自动下一条并回收</p>
       <div class="scores" id="scores">
         <button type="button" data-score="1">1</button>
         <button type="button" data-score="2">2</button>
@@ -42,7 +42,7 @@
       <button type="button" class="ghost" id="btnReset">清空本地打分</button>
     </footer>
   </div>
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+  <script src="config.js?v=3"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>

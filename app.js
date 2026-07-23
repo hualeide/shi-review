@@ -230,17 +230,12 @@ function renderSimpleItem(item) {
     })
     .join("");
 
+  // 纯图/文：不套头像气泡，只平铺内容
   return `
-    <div class="simple-head">
-      <div>
-        <h2>${escapeHtml(types.includes("image") ? "图片" : types.includes("video") ? "视频" : "文字")}</h2>
-        <div class="sub">${item.index} / ${items.length} · ${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
-      </div>
-      <div class="tags">${types.map((t) => `<span class="tag">${t}</span>`).join("")}</div>
-    </div>
+    <div class="simple-meta">${item.index}/${items.length} · ${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
     <div class="simple-body">
       ${line.text ? `<p class="simple-text">${escapeHtml(line.text)}</p>` : ""}
-      ${mediaHtml ? `<div class="simple-media-wrap">${mediaHtml}</div>` : ""}
+      ${mediaHtml ? `<div class="simple-media-wrap">${mediaHtml}</div>` : (!line.text ? '<p class="loading">无内容</p>' : "")}
     </div>
   `;
 }
