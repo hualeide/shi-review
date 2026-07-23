@@ -1,0 +1,69 @@
+name: Collect scores from ntfy
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull ntfy and merge scores
+        shell: bash
+        run: |
+          set -e
+          TOPIC=shi-review-hualeide-inbox
+          mkdir -p data
+          curl -fsSL "https://ntfy.sh/${TOPIC}/json?poll=1&since=7d" -o /tmp/ntfy.jsonl || echo -n > /tmp/ntfy.jsonl
+          python3 <<'PY'
+          import json, pathlib, time
+          root = pathlib.Path("data")
+          path = root / "scores.json"
+          existing = {"updated_at": 0, "scores": []}
+          if path.exists():
+              try:
+                  existing = json.loads(path.read_text(encoding="utf-8"))
+              except Exception:
+                  pass
+          by_key = {}
+          for row in existing.get("scores") or []:
+              if not isinstance(row, dict) or not row.get("id"):
+                  continue
+              key = f"{row.get('id')}|{row.get('reviewer')}"
+              by_key[key] = row
+          raw = pathlib.Path("/tmp/ntfy.jsonl").read_text(encoding="utf-8", errors="replace")
+          added = 0
+          for line in raw.splitlines():
+              line=line.strip()
+              if not line:
+                  continue
+              try:
+                  msg = json.loads(line)
+                  body = msg.get("message") or ""
+                  row = json.loads(body)
+              except Exception:
+                  continue
+              if not isinstance(row, dict) or not row.get("id"):
+                  continue
+              key = f"{row.get('id')}|{row.get('reviewer')}"
+              prev = by_key.get(key)
+              if not prev or int(row.get("at") or 0) >= int(prev.get("at") or 0):
+                  if key not in by_key:
+                      added += 1
+                  by_key[key] = row
+          scores = sorted(by_key.values(), key=lambda r: int(r.get("at") or 0))
+          path.write_text(json.dumps({"updated_at": int(time.time()), "scores": scores}, ensure_ascii=False, indent=2), encoding="utf-8")
+          print(f"total={len(scores)} added_or_seen={added}")
+          PY
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/scores.json
+          git diff --staged --quiet || git commit -m "chore: sync review scores"
+          git push
