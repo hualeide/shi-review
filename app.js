@@ -356,35 +356,88 @@ async function submitScoreRemote(payload) {
   return { ok, detail: detail.join("+") || "无通道" };
 }
 
-function renderThreadLine(line) {
+function hashColorIndex(name) {
+  let hash = 0;
+  const s = String(name || "");
+  for (let i = 0; i < s.length; i++) {
+    hash = s.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return Math.abs(hash) % 16;
+}
+
+const COLOR_PALETTE = [
+  { avatar: "#fb7185", name: "#fb7185" }, // rose
+  { avatar: "#f472b6", name: "#f472b6" },
+  { avatar: "#e879f9", name: "#e879f9" },
+  { avatar: "#c084fc", name: "#c084fc" },
+  { avatar: "#a78bfa", name: "#a78bfa" },
+  { avatar: "#818cf8", name: "#818cf8" },
+  { avatar: "#60a5fa", name: "#60a5fa" },
+  { avatar: "#38bdf8", name: "#38bdf8" },
+  { avatar: "#22d3ee", name: "#22d3ee" },
+  { avatar: "#2dd4bf", name: "#2dd4bf" },
+  { avatar: "#34d399", name: "#34d399" },
+  { avatar: "#4ade80", name: "#4ade80" },
+  { avatar: "#a3e635", name: "#a3e635" },
+  { avatar: "#fbbf24", name: "#fbbf24" },
+  { avatar: "#fb923c", name: "#fb923c" },
+  { avatar: "#f87171", name: "#f87171" },
+];
+
+function fmtDaySep(ts) {
+  if (!ts) return "";
+  try {
+    return new Date(Number(ts) * 1000).toLocaleString("zh-CN", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return "";
+  }
+}
+
+function renderThreadLine(line, prevLine) {
   const name = displayName(line);
+  const colors = COLOR_PALETTE[hashColorIndex(name)];
   const mediaHtml = (line.media || [])
     .map((m) => {
       const src = mediaSrc(m);
       if (m.type === "image") {
         return src
-          ? `<img class="zoomable" src="${src}" alt="" loading="lazy" data-full="${src}" />`
-          : `<span class="hint">[图片]</span>`;
+          ? `<img class="zoomable cl-img" src="${src}" alt="" loading="lazy" data-full="${src}" />`
+          : `<span class="cl-hint">[图片]</span>`;
       }
       if (m.type === "video") {
         return src
-          ? `<video src="${src}" controls playsinline></video>`
-          : `<span class="hint">[视频]</span>`;
+          ? `<video class="cl-video" src="${src}" controls playsinline></video>`
+          : `<span class="cl-hint">[视频]</span>`;
       }
       return "";
     })
     .join("");
 
+  let sep = "";
+  const gap = prevLine && line.time && prevLine.time
+    ? Number(line.time) - Number(prevLine.time)
+    : 0;
+  if (!prevLine || gap > 5 * 60) {
+    const label = fmtDaySep(line.time);
+    if (label) sep = `<div class="cl-time-sep"><span>${escapeHtml(label)}</span></div>`;
+  }
+
   return `
-    <div class="msg">
-      <div class="avatar">${escapeHtml(avatarChar(name))}</div>
-      <div class="msg-body">
-        <div class="msg-meta">
-          <span class="name">${escapeHtml(name)}</span>
-          <span class="time">${escapeHtml(fmtTime(line.time))}</span>
+    ${sep}
+    <div class="cl-msg">
+      <div class="cl-avatar" style="background:${colors.avatar}">${escapeHtml(avatarChar(name))}</div>
+      <div class="cl-body">
+        <div class="cl-name" style="color:${colors.name}">${escapeHtml(name)}</div>
+        <div class="cl-content">
+          ${line.text ? `<div class="cl-bubble"><p>${escapeHtml(line.text)}</p></div>` : ""}
+          ${mediaHtml ? `<div class="cl-media">${mediaHtml}</div>` : ""}
         </div>
-        ${line.text ? `<div class="bubble">${escapeHtml(line.text)}</div>` : ""}
-        ${mediaHtml ? `<div class="msg-media">${mediaHtml}</div>` : ""}
       </div>
     </div>
   `;
@@ -420,7 +473,6 @@ function renderSimpleItem(item) {
     })
     .join("");
 
-  // 纯图/文：不套头像气泡，只平铺内容
   return `
     <div class="simple-meta">${item.index}/${items.length} · ${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
     <div class="simple-body">
@@ -432,19 +484,24 @@ function renderSimpleItem(item) {
 
 function renderChatRecord(item) {
   const thread = item.thread || [];
+  const rows = thread
+    .map((line, i) => renderThreadLine(line, i > 0 ? thread[i - 1] : null))
+    .join("");
   return `
     <div class="chat-head">
-      <div>
-        <h2>${escapeHtml(item.title || "聊天记录")}</h2>
-        <div class="sub">${item.index} / ${items.length} · 来自 ${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
+      <div class="chat-head-main">
+        <div class="chat-head-icon">💬</div>
+        <div>
+          <h2>${escapeHtml(item.title || "聊天记录")}</h2>
+          <div class="sub">${item.index} / ${items.length} · ${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
+        </div>
       </div>
       <div class="tags">
-        <span class="tag">聊天记录</span>
         <span class="tag">${thread.length} 条消息</span>
       </div>
     </div>
-    <div class="chat-thread" id="chatThread">
-      ${thread.map(renderThreadLine).join("") || '<p class="loading">空记录</p>'}
+    <div class="chat-thread cl-thread" id="chatThread">
+      ${rows || '<p class="loading">空记录</p>'}
     </div>
   `;
 }
