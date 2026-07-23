@@ -3,47 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>史审核 · 一条一条打分</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=9" />
+  <title>史记档 · 答题卡</title>
+  <link rel="stylesheet" href="styles.css?v=11" />
 </head>
 <body>
   <div class="app">
     <header class="top">
-      <div class="brand">史审核</div>
+      <div class="brand">史记档</div>
       <div class="meta" id="meta">加载中…</div>
     </header>
 
-    <main class="stage" id="stage">
+    <nav class="sheet-nav" id="sheetNav" hidden>
+      <button type="button" class="tab is-on" data-filter="record">记录</button>
+      <button type="button" class="tab" data-filter="all">全部</button>
+      <button type="button" class="tab" data-filter="single">单条</button>
+      <span class="nav-hint">点格看全文 · GitHub 网盘</span>
+    </nav>
+
+    <main class="stage stage-sheet" id="stage">
       <p class="loading">正在加载条目…</p>
     </main>
 
-    <section class="score-bar" id="scoreBar" hidden>
-      <p class="hint">纯看可空格/跳过 · 想评再按 1–5（不卡翻页）</p>
-      <div class="scores" id="scores">
+    <section class="detail-bar" id="detailBar" hidden>
+      <button type="button" class="ghost" id="btnBackSheet">← 答题卡</button>
+      <div class="scores soft" id="scores" title="可选打分">
         <button type="button" data-score="1">1</button>
         <button type="button" data-score="2">2</button>
         <button type="button" data-score="3">3</button>
         <button type="button" data-score="4">4</button>
         <button type="button" data-score="5">5</button>
       </div>
-      <p class="hint" id="syncStatus"></p>
-      <div class="extra">
-        <button type="button" class="ghost" id="btnSkip">跳过</button>
-        <button type="button" class="ghost" id="btnBack">上一条</button>
-        <a class="ghost" href="scores.html" style="display:inline-block;padding:10px 14px;text-decoration:none;border:1px solid var(--line);border-radius:8px;color:var(--muted)">看汇总</a>
-      </div>
+      <p class="hint tiny" id="syncStatus"></p>
     </section>
 
     <footer class="foot" id="foot" hidden>
-      <button type="button" id="btnExport">导出打分 JSON</button>
-      <button type="button" class="ghost" id="btnReset">清空本地打分</button>
+      <button type="button" class="ghost" id="btnExport">导出标记</button>
+      <a class="ghost" href="scores.html">汇总</a>
     </footer>
   </div>
-  <script src="config.js?v=9"></script>
-  <script src="app.js?v=9"></script>
+  <script src="config.js?v=11"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>
-
