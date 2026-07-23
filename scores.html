@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>史审核 · 打分汇总</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <div class="brand">打分汇总</div>
+      <div class="meta"><a href="index.html" style="color:inherit">← 返回审核</a></div>
+    </header>
+    <main class="stage" id="stage">
+      <p class="loading">加载中…</p>
+    </main>
+  </div>
+  <script src="config.js"></script>
+  <script>
+    function esc(s){return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')}
+    async function loadNtfy(topic){
+      const res = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=72h`, {cache:'no-store'});
+      if(!res.ok) return [];
+      const text = await res.text();
+      const rows = [];
+      for(const line of text.split('\n')){
+        if(!line.trim()) continue;
+        try{
+          const msg = JSON.parse(line);
+          const body = typeof msg.message === 'string' ? msg.message : '';
+          try { rows.push(JSON.parse(body)); } catch { /* ignore */ }
+        }catch{}
+      }
+      return rows;
+    }
+    async function loadCommitted(){
+      try{
+        const res = await fetch('data/scores.json', {cache:'no-store'});
+        if(!res.ok) return [];
+        const data = await res.json();
+        return data.scores || data || [];
+      }catch{ return []; }
+    }
+    function aggregate(rows){
+      const byId = {};
+      for(const r of rows){
+        if(!r || !r.id) continue;
+        const key = r.id + '|' + (r.reviewer||'');
+        byId[key] = r; // 同人同条保留最后一次
+      }
+      return Object.values(byId).sort((a,b)=> (b.at||0)-(a.at||0));
+    }
+    function stats(rows){
+      const valid = rows.filter(r=>!r.skip && r.score>0);
+      const avg = valid.length ? (valid.reduce((s,r)=>s+r.score,0)/valid.length).toFixed(2) : '-';
+      const map = {};
+      for(const r of valid){
+        if(!map[r.id]) map[r.id] = [];
+        map[r.id].push(r.score);
+      }
+      const ranked = Object.entries(map).map(([id, arr])=>{
+        const a = arr.reduce((s,x)=>s+x,0)/arr.length;
+        return {id, avg:a, n:arr.length};
+      }).sort((a,b)=> b.avg-a.avg);
+      return {avg, ranked, total: rows.length, valid: valid.length};
+    }
+    async function boot(){
+      const topic = (window.SHI_SCORE||{}).ntfyTopic;
+      const [remote, committed] = await Promise.all([
+        topic ? loadNtfy(topic) : [],
+        loadCommitted(),
+      ]);
+      const rows = aggregate([].concat(committed, remote));
+      const s = stats(rows);
+      const stage = document.getElementById('stage');
+      if(!rows.length){
+        stage.innerHTML = '<p class="loading">还没有收到打分。去首页评几条后回到这里刷新。</p>';
+        return;
+      }
+      stage.innerHTML = `
+        <p>共回收 <strong>${s.total}</strong> 条记录 · 有效分 ${s.valid} · 均分 ${s.avg}</p>
+        <div class="forward-box">${s.ranked.slice(0,15).map(r=> `${esc(r.id)}  均分 ${r.avg.toFixed(2)}（${r.n}人）`).join('\n')}</div>
+        <p style="margin-top:16px;color:var(--muted)">最近明细</p>
+        <div class="forward-box">${rows.slice(0,40).map(r=> `${new Date(r.at||0).toLocaleString('zh-CN')}  ${esc(r.reviewer||'?')}  ${r.skip?'跳过':r.score}  ${esc(r.id)}  ${esc(r.text_preview||'')}`).join('\n')}</div>
+      `;
+    }
+    boot();
+  </script>
+</body>
+</html>

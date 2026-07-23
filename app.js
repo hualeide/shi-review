@@ -1,13 +1,16 @@
 const STORAGE_KEY = "shi-review-scores-v1";
+const REVIEWER_KEY = "shi-reviewer-name";
 
 const stage = document.getElementById("stage");
 const meta = document.getElementById("meta");
 const scoreBar = document.getElementById("scoreBar");
 const foot = document.getElementById("foot");
+const syncStatus = document.getElementById("syncStatus");
 
 let items = [];
 let cursor = 0;
 let scores = loadScores();
+let reviewer = localStorage.getItem(REVIEWER_KEY) || "";
 
 function loadScores() {
   try {
@@ -21,10 +24,79 @@ function saveScores() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
 }
 
+function ensureReviewer() {
+  if (reviewer) return reviewer;
+  const name = prompt("你的昵称（打分会记在你名下）:", "") || "anonymous";
+  reviewer = String(name).trim() || "anonymous";
+  localStorage.setItem(REVIEWER_KEY, reviewer);
+  return reviewer;
+}
+
 function mediaSrc(m) {
   if (m.local) return m.local;
   if (m.url) return m.url;
   return "";
+}
+
+function setSync(text, ok) {
+  if (!syncStatus) return;
+  syncStatus.textContent = text;
+  syncStatus.dataset.ok = ok ? "1" : "0";
+}
+
+async function submitScoreRemote(payload) {
+  const cfg = window.SHI_SCORE || {};
+  const body = JSON.stringify(payload);
+  let ok = false;
+  let detail = [];
+
+  // 1) GitHub Issue 评论（自动回收主通道）
+  if (cfg.token && cfg.repo && cfg.issueNumber) {
+    try {
+      const res = await fetch(
+        `https://api.github.com/repos/${cfg.repo}/issues/${cfg.issueNumber}/comments`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${cfg.token}`,
+            Accept: "application/vnd.github+json",
+            "Content-Type": "application/json",
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+          body: JSON.stringify({ body: "```json\n" + body + "\n```" }),
+        }
+      );
+      if (res.ok) {
+        ok = true;
+        detail.push("GitHub");
+      } else {
+        detail.push("GitHub:" + res.status);
+      }
+    } catch (e) {
+      detail.push("GitHub网络失败");
+    }
+  }
+
+  // 2) ntfy 备份
+  if (cfg.ntfyTopic) {
+    try {
+      const res = await fetch(`https://ntfy.sh/${cfg.ntfyTopic}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Title: "shi-score" },
+        body,
+      });
+      if (res.ok) {
+        ok = true;
+        detail.push("ntfy");
+      } else {
+        detail.push("ntfy:" + res.status);
+      }
+    } catch {
+      detail.push("ntfy失败");
+    }
+  }
+
+  return { ok, detail: detail.join("+") || "无通道" };
 }
 
 function renderItem(item) {
@@ -43,17 +115,13 @@ function renderItem(item) {
         if (!src) return `<p class="loading">[视频暂无本地文件：${m.file || ""}]</p>`;
         return `<video src="${src}" controls playsinline></video>`;
       }
-      if (m.type === "forward") {
-        return "";
-      }
       return "";
     })
     .join("");
 
-  const forward =
-    item.forward_summary
-      ? `<div class="forward-box">${escapeHtml(item.forward_summary)}</div>`
-      : "";
+  const fromFwd = item.from_forward
+    ? `<span class="tag">拆自打包</span>`
+    : "";
 
   const prev = scores[item.id];
   const prevLine = prev
@@ -65,10 +133,9 @@ function renderItem(item) {
       <span><strong>${item.index}</strong> / ${items.length} · ${escapeHtml(item.sender || "")}</span>
       <span>${escapeHtml(when)}</span>
     </div>
-    <div class="tags">${tags || '<span class="tag">unknown</span>'}</div>
+    <div class="tags">${tags || '<span class="tag">unknown</span>'}${fromFwd}</div>
     ${item.text ? `<p class="body-text">${escapeHtml(item.text)}</p>` : ""}
-    <div class="media">${mediaHtml}</div>
-    ${forward}
+    <div class="media">${mediaHtml || (item.text ? "" : '<p class="loading">无媒体</p>')}</div>
     ${prevLine}
   `;
 }
@@ -83,7 +150,7 @@ function escapeHtml(s) {
 
 function updateMeta() {
   const done = Object.keys(scores).length;
-  meta.textContent = `${cursor + 1}/${items.length} · 已评 ${done}`;
+  meta.textContent = `${cursor + 1}/${items.length} · 已评 ${done} · ${reviewer || "未命名"}`;
 }
 
 function showDone() {
@@ -94,7 +161,7 @@ function showDone() {
     <div class="done">
       <p><strong>本轮审完</strong></p>
       <p>共 ${items.length} 条，已记录 ${Object.keys(scores).length} 条，均分 ${avg}</p>
-      <p>点下方「导出打分 JSON」发给汇总的人。</p>
+      <p>打分已自动回收到 <a href="scores.html">汇总页</a> / GitHub Issue。</p>
     </div>
   `;
   meta.textContent = `完成 · 已评 ${Object.keys(scores).length}`;
@@ -116,17 +183,24 @@ function go(to) {
   foot.hidden = false;
 }
 
-function rate(score, skip = false) {
+async function rate(score, skip = false) {
   const item = items[cursor];
   if (!item) return;
-  scores[item.id] = {
+  ensureReviewer();
+  const payload = {
     id: item.id,
     message_id: item.message_id,
     score: skip ? 0 : score,
     skip: !!skip,
+    reviewer,
     at: Date.now(),
+    text_preview: (item.text || "").slice(0, 80),
   };
+  scores[item.id] = payload;
   saveScores();
+  setSync("提交中…", true);
+  const result = await submitScoreRemote(payload);
+  setSync(result.ok ? `已回收 · ${result.detail}` : `回收失败 · ${result.detail}`, result.ok);
   go(cursor + 1);
 }
 
@@ -142,7 +216,7 @@ document.getElementById("btnBack").addEventListener("click", () => go(cursor - 1
 document.getElementById("btnExport").addEventListener("click", () => {
   const payload = {
     exported_at: new Date().toISOString(),
-    reviewer: localStorage.getItem("shi-reviewer-name") || "anonymous",
+    reviewer: reviewer || "anonymous",
     scores,
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
@@ -168,6 +242,7 @@ window.addEventListener("keydown", (e) => {
 });
 
 async function boot() {
+  ensureReviewer();
   const res = await fetch("data/items.json", { cache: "no-store" });
   if (!res.ok) throw new Error("无法加载 data/items.json");
   const data = await res.json();
@@ -176,7 +251,6 @@ async function boot() {
     stage.innerHTML = `<p class="loading">没有条目。先跑 scripts/fetch_latest_shi.py</p>`;
     return;
   }
-  // 从第一条未打分处开始
   let start = items.findIndex((it) => !scores[it.id]);
   if (start < 0) start = items.length;
   go(start);

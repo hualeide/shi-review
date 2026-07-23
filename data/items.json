@@ -1,11 +1,11 @@
 {
   "source_group": "1087805702",
-  "generated_at": 1784835447,
+  "generated_at": 1784835830,
   "count": 30,
+  "note": "合并转发已拆成单条；每条单独打分",
   "items": [
     {
       "id": "shi_2138287445",
-      "index": 1,
       "message_id": 2138287445,
       "real_seq": "23746",
       "time": 1784835098,
@@ -18,17 +18,17 @@
       "media": [
         {
           "type": "video",
-          "url": "https://multimedia.nt.qq.com.cn:443/download?appid=1415&format=origin&orgfmt=t264&spec=0&client_proto=ntv2&client_appid=537352525&client_type=win&client_ver=9.9.30-48762&client_down_type=auto&client_aio_type=aio&rkey=CAISqAGKPkFJeHAjcvQFTmYHIXGUhUh9fuHqhs20PuqZ-rt3ivkGqOlMtZl1jHNujI650W-0GufC7JoKUP7VKVS2RDpEOuz7s5sYlnzolPBE5_eicOhWsXQdojUjZT82q2-TrdGZe3TziZUIHbY4ToD-EA5nRTdsiP2NoNZCsnpPy6fIYpYN4ObcfYCx48RJIMQm7iHfSEPf2iQm-WGZCzLvoFDJg9h-8dXwE4A",
+          "url": "https://multimedia.nt.qq.com.cn:443/download?appid=1415&format=origin&orgfmt=t264&spec=0&client_proto=ntv2&client_appid=537352525&client_type=win&client_ver=9.9.30-48762&client_down_type=auto&client_aio_type=aio&rkey=CAESqAGuAyRVcY6Svve1rYXQ98liaY-nGF35T4_vLdUpsaw9n3sJVsZNMSadnH5N9_rzeVlobIrRDOXZekVlh7cvONtkAXsgtPjc3uZiu9vYeN2VMIdYIOSLPM5QqYeXPhwmYuu0fRulFam4-yPZ6Usx3-8HM2Z_uu0pQMM3-ouZU-sG0m4tB5smPLmOBn5asn-P44wab0jrub8XkW-7EUk-mQC79CphEnys_VA",
           "local": "media/shi_2138287445_vid1.mp4",
           "file": "b309482a1e6de84f5b3ff8114bfb1da4.mp4"
         }
       ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:video,file=b309482a1e6de84f5b3ff8114bfb1da4.mp4,url=https://multimedia.nt.qq.com.cn:443/download?appid=1415&amp;format=origin&amp;orgfmt=t264&amp;spec=0&amp;client_proto=ntv2&amp;client_appid=537352525&amp;client_type=win&amp;client_ver=9.9.30-48762&amp;client_down_type=auto&amp;client_aio_type="
+      "from_forward": null,
+      "parent_sender": null,
+      "index": 1
     },
     {
       "id": "shi_1623005904",
-      "index": 2,
       "message_id": 1623005904,
       "real_seq": "23744",
       "time": 1784814345,
@@ -41,17 +41,17 @@
       "media": [
         {
           "type": "video",
-          "url": "https://multimedia.nt.qq.com.cn:443/download?appid=1415&format=origin&orgfmt=t264&spec=0&client_proto=ntv2&client_appid=537352525&client_type=win&client_ver=9.9.30-48762&client_down_type=auto&client_aio_type=aio&rkey=CAISqAGKPkFJeHAjcvQFTmYHIXGUhUh9fuHqhs31VgwL58aipPnaxZ9cM_CndKx9h-4x0X2pb6kz4Gl4c4p3gqCye2uehUaBqcnudYHy9bxpEJ8DaaNbFS_jCjd9qPWJQXTCV15gcYQ5UUXbzDWiOJotI6qamt67B_R-wXhRmHz2_MJ9lUdwW04iqV2K6A2RG5A-eUj5QTKU6LTBG9h-EgfTP5PqljkHAJKMq8c",
+          "url": "https://multimedia.nt.qq.com.cn:443/download?appid=1415&format=origin&orgfmt=t264&spec=0&client_proto=ntv2&client_appid=537352525&client_type=win&client_ver=9.9.30-48762&client_down_type=auto&client_aio_type=aio&rkey=CAESqAGuAyRVcY6Svve1rYXQ98livaUP-hWJ98h49Qrp4HSNZ5pTmKN-P3sCdbevfiJmCMaVzDqezfZtkiTCrIljRVDW-g3p-MQYJ5cr1h3wyEXwVOvcV3Xmd10MQ-Egyu2HVDkyb_HyqYpTDEfcLi8hWEu16fxGFhvq0y5FiAQidlsNBTHKCKLeBVqIEYnbR-h7ciRUYncWWEFdwO8SJXtPdQTh6PBoipcppq0",
           "local": "media/shi_1623005904_vid1.mp4",
           "file": "7443617daacaa65fdcd5cf2d1c513f5f.mp4"
         }
       ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:video,file=7443617daacaa65fdcd5cf2d1c513f5f.mp4,url=https://multimedia.nt.qq.com.cn:443/download?appid=1415&amp;format=origin&amp;orgfmt=t264&amp;spec=0&amp;client_proto=ntv2&amp;client_appid=537352525&amp;client_type=win&amp;client_ver=9.9.30-48762&amp;client_down_type=auto&amp;client_aio_type="
+      "from_forward": null,
+      "parent_sender": null,
+      "index": 2
     },
     {
       "id": "shi_935079987",
-      "index": 3,
       "message_id": 935079987,
       "real_seq": "23743",
       "time": 1784812738,
@@ -68,75 +68,421 @@
           "local": "media/shi_935079987_img1.jpg"
         }
       ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=6FE9F61B7E14538DCBAFB199C8D34EB5.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhSzGQGhLHvBv59cIA4ABklquxyCFBjGvwYg_woowYLryfHolQMyBHByb2RQgL2jAVoQdclSm-D1W1AAfI7aO9Y38HoCApiCAQJuag&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
+      "from_forward": null,
+      "parent_sender": null,
+      "index": 3
     },
     {
-      "id": "shi_1045165768",
-      "index": 4,
-      "message_id": 1045165768,
-      "real_seq": "23741",
-      "time": 1784811387,
-      "user_id": 764265237,
-      "sender": "阿尔托莉娅·潘德拉贡",
+      "id": "fwd_7665706536943180019_2053013865",
+      "message_id": 2053013865,
+      "real_seq": "21617",
+      "time": 1784633244,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
       "types": [
-        "forward"
+        "text"
+      ],
+      "text": "贱人",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 4
+    },
+    {
+      "id": "fwd_7665706536943180019_1103405063",
+      "message_id": 1103405063,
+      "real_seq": "21618",
+      "time": 1784633259,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "image"
       ],
       "text": "",
       "media": [
         {
-          "type": "forward",
-          "id": "7665706536943180019"
+          "type": "image",
+          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhQXicRW3cHCxUe8EQTGN0zMuVxAMRjPkgQg_woojfS2xezolQMyBHByb2RQgL2jAVoQlfvRL-akSuIiy50sfWBnT3oCwJqCAQJneg&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
+          "local": "media/fwd_7665706536943180019_1103405063_img1.jpg"
         }
       ],
-      "forward_summary": "1. QQ用户: \n2. QQ用户:  贱人\n3. QQ用户: [图片]\n4. QQ用户: 水鬼啊，\n5. QQ用户: [图片]\n6. QQ用户: @空谷幽兰 来了\n7. QQ用户: 孩子找到了？\n8. QQ用户: 哎没错跪那干啥呢\n…共 20 条",
-      "raw_preview": "[CQ:forward,id=7665706536943180019,content=&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;"
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 5
     },
     {
-      "id": "shi_1789576385",
-      "index": 5,
-      "message_id": 1789576385,
-      "real_seq": "23740",
-      "time": 1784808570,
-      "user_id": 1620275918,
-      "sender": "清俳彡泛咕生",
+      "id": "fwd_7665706536943180019_101141399",
+      "message_id": 101141399,
+      "real_seq": "21646",
+      "time": 1784637730,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
       "types": [
-        "forward"
+        "text"
+      ],
+      "text": "水鬼啊，",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 6
+    },
+    {
+      "id": "fwd_7665706536943180019_2090121121",
+      "message_id": 2090121121,
+      "real_seq": "21647",
+      "time": 1784637840,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "image"
       ],
       "text": "",
       "media": [
         {
-          "type": "forward",
-          "id": "7665694443751638159"
+          "type": "image",
+          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhTgYicf9Z_sKcEBYvp96ukAkApPHBiGzAwg_wooi4G3xezolQMyBHByb2RQgL2jAVoQaTUBuOdnzSE7lBktVunE1noCh7WCAQJneg&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
+          "local": "media/fwd_7665706536943180019_2090121121_img1.jpg"
         }
       ],
-      "forward_summary": "1. 手心中的光: [图片][图片]\n2. 手心中的光: 今日安全警示",
-      "raw_preview": "[CQ:forward,id=7665694443751638159,content=&#91;object Object&#93;&#44;&#91;object Object&#93;]"
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 7
     },
     {
-      "id": "shi_1678980182",
-      "index": 6,
-      "message_id": 1678980182,
-      "real_seq": "23739",
-      "time": 1784806753,
-      "user_id": 3764752398,
-      "sender": "Fucky Boy",
+      "id": "fwd_7665706536943180019_969973961",
+      "message_id": 969973961,
+      "real_seq": "21648",
+      "time": 1784637856,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
       "types": [
-        "forward"
+        "text"
+      ],
+      "text": "@空谷幽兰 来了",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 8
+    },
+    {
+      "id": "fwd_7665706536943180019_1466226385",
+      "message_id": 1466226385,
+      "real_seq": "21649",
+      "time": 1784637867,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "text"
+      ],
+      "text": "孩子找到了？",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 9
+    },
+    {
+      "id": "fwd_7665706536943180019_272273298",
+      "message_id": 272273298,
+      "real_seq": "21650",
+      "time": 1784637871,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "text"
+      ],
+      "text": "哎没错跪那干啥呢",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 10
+    },
+    {
+      "id": "fwd_7665706536943180019_22345851",
+      "message_id": 22345851,
+      "real_seq": "21651",
+      "time": 1784637881,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "text"
+      ],
+      "text": "死了",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 11
+    },
+    {
+      "id": "fwd_7665706536943180019_2015057165",
+      "message_id": 2015057165,
+      "real_seq": "21652",
+      "time": 1784637899,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "text"
+      ],
+      "text": "唉",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 12
+    },
+    {
+      "id": "fwd_7665706536943180019_1867446512",
+      "message_id": 1867446512,
+      "real_seq": "21653",
+      "time": 1784637902,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "image"
       ],
       "text": "",
       "media": [
         {
-          "type": "forward",
-          "id": "7665686635550088149"
+          "type": "image",
+          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhSnUuIg0WkE207EQmYI8lSlfUINrRjx9gsg_woo2trExezolQMyBHByb2RQgL2jAVoQJ1PmlIohJv5Ch1sOfxrGA3oCWZyCAQJneg&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
+          "local": "media/fwd_7665706536943180019_1867446512_img1.jpg"
         }
       ],
-      "forward_summary": "1. 落笔: [图片]\n2. 落笔: [图片]",
-      "raw_preview": "[CQ:forward,id=7665686635550088149,content=&#91;object Object&#93;&#44;&#91;object Object&#93;]"
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 13
+    },
+    {
+      "id": "fwd_7665706536943180019_94918840",
+      "message_id": 94918840,
+      "real_seq": "21654",
+      "time": 1784637918,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "text"
+      ],
+      "text": "but特意说明是孩子父亲租船带小孩玩",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 14
+    },
+    {
+      "id": "fwd_7665706536943180019_781080697",
+      "message_id": 781080697,
+      "real_seq": "21655",
+      "time": 1784637930,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "text"
+      ],
+      "text": "正常",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 15
+    },
+    {
+      "id": "fwd_7665706536943180019_1280790686",
+      "message_id": 1280790686,
+      "real_seq": "21656",
+      "time": 1784637964,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "text"
+      ],
+      "text": "说不定过会就是父亲不顾母亲阻拦了",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 16
+    },
+    {
+      "id": "fwd_7665706536943180019_619004049",
+      "message_id": 619004049,
+      "real_seq": "21657",
+      "time": 1784638065,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "text"
+      ],
+      "text": "她们老嘴硬干什么",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 17
+    },
+    {
+      "id": "fwd_7665706536943180019_1644720117",
+      "message_id": 1644720117,
+      "real_seq": "21658",
+      "time": 1784638070,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "text"
+      ],
+      "text": "@手残的学渣 长子不是被父亲就下来的吗",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 18
+    },
+    {
+      "id": "fwd_7665706536943180019_1326560073",
+      "message_id": 1326560073,
+      "real_seq": "21659",
+      "time": 1784638082,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "text"
+      ],
+      "text": "我说现在部分新闻媒体可信度不如聊天记录",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 19
+    },
+    {
+      "id": "fwd_7665706536943180019_962316544",
+      "message_id": 962316544,
+      "real_seq": "21660",
+      "time": 1784638094,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "text"
+      ],
+      "text": "难道否定就可以让事实消失了吗",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 20
+    },
+    {
+      "id": "fwd_7665706536943180019_1782872638",
+      "message_id": 1782872638,
+      "real_seq": "21661",
+      "time": 1784638112,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "text"
+      ],
+      "text": "可以让罪名转移",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 21
+    },
+    {
+      "id": "fwd_7665706536943180019_492966231",
+      "message_id": 492966231,
+      "real_seq": "21663",
+      "time": 1784638119,
+      "user_id": 1094950020,
+      "sender": "QQ用户",
+      "types": [
+        "text"
+      ],
+      "text": "可以让罪名转移",
+      "media": [],
+      "from_forward": 1045165768,
+      "parent_sender": "阿尔托莉娅·潘德拉贡",
+      "index": 22
+    },
+    {
+      "id": "fwd_7665694443751638159_1414681222",
+      "message_id": 1414681222,
+      "real_seq": "221771",
+      "time": 1784807620,
+      "user_id": 1094950020,
+      "sender": "手心中的光",
+      "types": [
+        "image"
+      ],
+      "text": "",
+      "media": [
+        {
+          "type": "image",
+          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhTZl_0Ba9yNo3Wj0Ekn0KYoyoznoRjilgUg_woo04W9huLolQMyBHByb2RQgL2jAVoQi1EwW3FPvSticDQ82Y9KLXoC1qyCAQJneg&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
+          "local": "media/fwd_7665694443751638159_1414681222_img1.jpg"
+        },
+        {
+          "type": "image",
+          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhSGFR-gPuov1-swprDVx2YC5x1OzxiavScg_woooO-7huLolQMyBHByb2RQgL2jAVoQg5yccD8ykZx2JNrC3gKdmHoCkWOCAQJneg&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
+          "local": "media/fwd_7665694443751638159_1414681222_img2.jpg"
+        }
+      ],
+      "from_forward": 1789576385,
+      "parent_sender": "清俳彡泛咕生",
+      "index": 23
+    },
+    {
+      "id": "fwd_7665694443751638159_1189412653",
+      "message_id": 1189412653,
+      "real_seq": "221772",
+      "time": 1784807629,
+      "user_id": 1094950020,
+      "sender": "手心中的光",
+      "types": [
+        "text"
+      ],
+      "text": "今日安全警示",
+      "media": [],
+      "from_forward": 1789576385,
+      "parent_sender": "清俳彡泛咕生",
+      "index": 24
+    },
+    {
+      "id": "fwd_7665686635550088149_895545904",
+      "message_id": 895545904,
+      "real_seq": "53809",
+      "time": 1784797687,
+      "user_id": 1094950020,
+      "sender": "落笔",
+      "types": [
+        "image"
+      ],
+      "text": "",
+      "media": [
+        {
+          "type": "image",
+          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhTid5gCWW9YVderE9yswW4C1Qu9Ghi_7wIg_woopbP1o9volQMyBHByb2RQgL2jAVoQwD0ovHmyViLKuFxNIvnaL3oCN1OCAQJuag&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
+          "local": "media/fwd_7665686635550088149_895545904_img1.jpg"
+        }
+      ],
+      "from_forward": 1678980182,
+      "parent_sender": "Fucky Boy",
+      "index": 25
+    },
+    {
+      "id": "fwd_7665686635550088149_1189400135",
+      "message_id": 1189400135,
+      "real_seq": "53810",
+      "time": 1784797687,
+      "user_id": 1094950020,
+      "sender": "落笔",
+      "types": [
+        "image"
+      ],
+      "text": "",
+      "media": [
+        {
+          "type": "image",
+          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhQg1wGEaaq-EePJeSJz4oSIPd_jQxjzrAIg_wooltj3o9volQMyBHByb2RQgL2jAVoQV70bHIsVP9ie3wtA7gavsHoC0ASCAQJuag&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
+          "local": "media/fwd_7665686635550088149_1189400135_img1.jpg"
+        }
+      ],
+      "from_forward": 1678980182,
+      "parent_sender": "Fucky Boy",
+      "index": 26
     },
     {
       "id": "shi_703748988",
-      "index": 7,
       "message_id": 703748988,
       "real_seq": "23738",
       "time": 1784806292,
@@ -153,12 +499,12 @@
           "local": "media/shi_703748988_img1.jpg"
         }
       ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=B688C8E2F1A869222BB61D401A6947F8.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhSSromkU2L6ItK5iXwOlaBGR9iQAhiFzwwg_woosKn9x9nolQMyBHByb2RQgL2jAVoQPFCEq8D93F-UqFYz9cOZZXoCXA6CAQJuag&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
+      "from_forward": null,
+      "parent_sender": null,
+      "index": 27
     },
     {
       "id": "shi_1106046705",
-      "index": 8,
       "message_id": 1106046705,
       "real_seq": "23737",
       "time": 1784806266,
@@ -175,12 +521,12 @@
           "local": "media/shi_1106046705_img1.jpg"
         }
       ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=113308C76DE8C172E20FA463936C6F83.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhQTy5XVEG-y67icFEVKDspUOkhDjRjd6Akg_woo9rHRu9nolQMyBHByb2RQgL2jAVoQtzlDG4jKvL7HGcfO1LqC8XoCMkuCAQJuag&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
+      "from_forward": null,
+      "parent_sender": null,
+      "index": 28
     },
     {
       "id": "shi_1164487104",
-      "index": 9,
       "message_id": 1164487104,
       "real_seq": "23736",
       "time": 1784806230,
@@ -197,12 +543,12 @@
           "local": "media/shi_1164487104_img1.jpg"
         }
       ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=5E57A70FF08E74F940F4AAFEAE741F1A.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhQxvDNt3kQYuyylIRlj7C40pWGnjRjenAUg_woovKblqtnolQMyBHByb2RQgL2jAVoQSI7rf_FaVxIVkjzhXbHco3oC5RWCAQJuag&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
+      "from_forward": null,
+      "parent_sender": null,
+      "index": 29
     },
     {
       "id": "shi_1277798180",
-      "index": 10,
       "message_id": 1277798180,
       "real_seq": "23735",
       "time": 1784806172,
@@ -219,441 +565,9 @@
           "local": "media/shi_1277798180_img1.jpg"
         }
       ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=EE226DC39AE4244B8CE0525F8BABC9B7.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhQTxLW4hB0rHb424EgydfMKGIxgFRjLwQcg_wookpDxjtnolQMyBHByb2RQgL2jAVoQagcNXNeWjzyv2QH-bX1oKnoC3UaCAQJuag&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
-    },
-    {
-      "id": "shi_1696076963",
-      "index": 11,
-      "message_id": 1696076963,
-      "real_seq": "23734",
-      "time": 1784806059,
-      "user_id": 1774346162,
-      "sender": "鸸鹋",
-      "types": [
-        "image"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "image",
-          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhRwPnIKTrh5dR-BmTbIyKt-9Fzpghjxqgcg_woo-Y7q2NjolQMyBHByb2RQgL2jAVoQsiliPMyy2Hprp_5bZaQYZXoChkiCAQJuag&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
-          "local": "media/shi_1696076963_img1.jpg"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=9AD1B48C4ACC4BF43BDC681BA08617D9.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhRwPnIKTrh5dR-BmTbIyKt-9Fzpghjxqgcg_woo-Y7q2NjolQMyBHByb2RQgL2jAVoQsiliPMyy2Hprp_5bZaQYZXoChkiCAQJuag&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
-    },
-    {
-      "id": "shi_1741296509",
-      "index": 12,
-      "message_id": 1741296509,
-      "real_seq": "23732",
-      "time": 1784803894,
-      "user_id": 1291563451,
-      "sender": "神山飞羽",
-      "types": [
-        "video"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "video",
-          "url": "https://multimedia.nt.qq.com.cn:443/download?appid=1415&format=origin&orgfmt=t264&spec=0&client_proto=ntv2&client_appid=537352525&client_type=win&client_ver=9.9.30-48762&client_down_type=auto&client_aio_type=aio&rkey=CAISqAHT7DdJ0kfGi4wnzXPkVAG9fJuCueupi9uQo_YeEHL4xHeQSw9zbmqbroHEMCZRWE8gom2ULKZIDiW8ydByPtz89xeZskYmh7YzVt57mekYTbsnfYjUgb4baHGdqrbnU0oSTAQ7OIWvOgcgO5O6Ce6LFWeHIPOTexRoLm23CbzlNxOkKfmX-NzIz_qtDAeS8VcOGcweViimi4XlHySPRXU7BjOyCfdABsQ",
-          "local": "media/shi_1741296509_vid1.mp4",
-          "file": "168a0f0818ec0ef52eb5a4c70b0bce9c.mp4"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:video,file=168a0f0818ec0ef52eb5a4c70b0bce9c.mp4,url=https://multimedia.nt.qq.com.cn:443/download?appid=1415&amp;format=origin&amp;orgfmt=t264&amp;spec=0&amp;client_proto=ntv2&amp;client_appid=537352525&amp;client_type=win&amp;client_ver=9.9.30-48762&amp;client_down_type=auto&amp;client_aio_type="
-    },
-    {
-      "id": "shi_2074522652",
-      "index": 13,
-      "message_id": 2074522652,
-      "real_seq": "23731",
-      "time": 1784802820,
-      "user_id": 1013022368,
-      "sender": "暗中观察的砂糖酱",
-      "types": [
-        "image"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "image",
-          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhTIf00HAZLhpI4xWk808ECl-Cp84hjKiQYg_woowN7c0MzolQMyBHByb2RQgL2jAVoQ98ET3xymrIo2VUZCRx1UgnoCIv-CAQJneg&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
-          "local": "media/shi_2074522652_img1.jpg"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=D79B408E16FF7EE2E28F8A5401DB37C2.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhTIf00HAZLhpI4xWk808ECl-Cp84hjKiQYg_woowN7c0MzolQMyBHByb2RQgL2jAVoQ98ET3xymrIo2VUZCRx1UgnoCIv-CAQJneg&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
-    },
-    {
-      "id": "shi_1768578934",
-      "index": 14,
-      "message_id": 1768578934,
-      "real_seq": "23730",
-      "time": 1784799909,
-      "user_id": 3764752398,
-      "sender": "Fucky Boy",
-      "types": [
-        "image"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "image",
-          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhTQ8N_6f4nqjwrY8VM6EHzAu34cbhiBuggg_wooqLLB5MHolQMyBHByb2RQgL2jAVoQxy-LOSrWrvPwdiCk2iTQLnoCTRyCAQJuag&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
-          "local": "media/shi_1768578934_img1.jpg"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=F71A39DE28D10EFA9ACAF18CE032E659.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhTQ8N_6f4nqjwrY8VM6EHzAu34cbhiBuggg_wooqLLB5MHolQMyBHByb2RQgL2jAVoQxy-LOSrWrvPwdiCk2iTQLnoCTRyCAQJuag&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
-    },
-    {
-      "id": "shi_585602319",
-      "index": 15,
-      "message_id": 585602319,
-      "real_seq": "23728",
-      "time": 1784799190,
-      "user_id": 764265237,
-      "sender": "阿尔托莉娅·潘德拉贡",
-      "types": [
-        "forward"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "forward",
-          "id": "7665654151530775776"
-        }
-      ],
-      "forward_summary": "1. 阿尔托莉娅·潘德拉贡: [视频]\n2. 阿尔托莉娅·潘德拉贡: [视频]\n3. 阿尔托莉娅·潘德拉贡: [图片]\n4. 阿尔托莉娅·潘德拉贡: [图片]",
-      "raw_preview": "[CQ:forward,id=7665654151530775776,content=&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;]"
-    },
-    {
-      "id": "shi_1796116709",
-      "index": 16,
-      "message_id": 1796116709,
-      "real_seq": "23727",
-      "time": 1784797578,
-      "user_id": 3764752398,
-      "sender": "Fucky Boy",
-      "types": [
-        "forward"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "forward",
-          "id": "7665647229154446729"
-        }
-      ],
-      "forward_summary": "1. QQ用户: 不愧是小红📚\n2. QQ用户: 给我看丁寒了🥶\n3. QQ用户: [图片]\n4. QQ用户: [图片]\n5. QQ用户: [图片]\n6. QQ用户: [图片]\n7. QQ用户: [图片]\n8. QQ用户: [图片]\n…共 14 条",
-      "raw_preview": "[CQ:forward,id=7665647229154446729,content=&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;"
-    },
-    {
-      "id": "shi_2135586513",
-      "index": 17,
-      "message_id": 2135586513,
-      "real_seq": "23726",
-      "time": 1784797554,
-      "user_id": 2183534198,
-      "sender": "魐",
-      "types": [
-        "image"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "image",
-          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhTUfB9CKKriaHqUAqpuiKoLuv1MVBicgwQg_wooorfKgbnolQMyBHByb2RQgL2jAVoQnyBGQ-FPdgmx4B6UkCMbBHoC1ZaCAQJneg&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
-          "local": "media/shi_2135586513_img1.jpg"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=30ACCF81CA0B1B6F7C1907CABAD3EA63.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhTUfB9CKKriaHqUAqpuiKoLuv1MVBicgwQg_wooorfKgbnolQMyBHByb2RQgL2jAVoQnyBGQ-FPdgmx4B6UkCMbBHoC1ZaCAQJneg&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
-    },
-    {
-      "id": "shi_800342697",
-      "index": 18,
-      "message_id": 800342697,
-      "real_seq": "23725",
-      "time": 1784797429,
-      "user_id": 3591390030,
-      "sender": "卜离十",
-      "types": [
-        "image"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "image",
-          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhTfW5LRMIp9yMsIJh_ApqoKHhuJZRj9ogcg_woovO6YxrjolQMyBHByb2RQgL2jAVoQyIJGGxIeA53b9wmSyPRlFHoCO-WCAQJneg&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
-          "local": "media/shi_800342697_img1.jpg"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=19606A596F2D47A92239216DFC6B3C03.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhTfW5LRMIp9yMsIJh_ApqoKHhuJZRj9ogcg_woovO6YxrjolQMyBHByb2RQgL2jAVoQyIJGGxIeA53b9wmSyPRlFHoCO-WCAQJneg&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
-    },
-    {
-      "id": "shi_2019878409",
-      "index": 19,
-      "message_id": 2019878409,
-      "real_seq": "23724",
-      "time": 1784795688,
-      "user_id": 1013022368,
-      "sender": "暗中观察的砂糖酱",
-      "types": [
-        "image"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "image",
-          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhS_MFztOcVYZRHdyiiXlZ0-ml45ehjC5Agg_woo85zdh7LolQMyBHByb2RQgL2jAVoQWibSKxDccBYaDktvPsJ9S3oCTmCCAQJneg&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
-          "local": "media/shi_2019878409_img1.jpg"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=7833E556FD67D7E68C3A52A60E6CE1ED.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhS_MFztOcVYZRHdyiiXlZ0-ml45ehjC5Agg_woo85zdh7LolQMyBHByb2RQgL2jAVoQWibSKxDccBYaDktvPsJ9S3oCTmCCAQJneg&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
-    },
-    {
-      "id": "shi_149028401",
-      "index": 20,
-      "message_id": 149028401,
-      "real_seq": "23723",
-      "time": 1784795426,
-      "user_id": 1491711478,
-      "sender": "九条",
-      "types": [
-        "text"
-      ],
-      "text": "【套餐提醒】尊敬的用户您好，截至7月23日14时，您的token账户已不足支付本群的1118个AI好友聊天，为了不影响您正常调用AI好友的聊天功能，请及时向本id用户缴费50元。\n【QQAI好友】",
-      "media": [],
-      "forward_summary": "",
-      "raw_preview": "【套餐提醒】尊敬的用户您好，截至7月23日14时，您的token账户已不足支付本群的1118个AI好友聊天，为了不影响您正常调用AI好友的聊天功能，请及时向本id用户缴费50元。\n【QQAI好友】"
-    },
-    {
-      "id": "shi_1534359253",
-      "index": 21,
-      "message_id": 1534359253,
-      "real_seq": "23722",
-      "time": 1784795064,
-      "user_id": 1942753990,
-      "sender": "　",
-      "types": [
-        "image"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "image",
-          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhRHa0VQdG6X1H6G9OUQuR8OkITK6hjLrwcg_wookfOE3q_olQMyBHByb2RQgL2jAVoQ00WCznJ-scxvUzhlW2g5hHoCinyCAQJuag&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
-          "local": "media/shi_1534359253_img1.jpg"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=901F088C0DCF4ADCD4810751AE15D828.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhRHa0VQdG6X1H6G9OUQuR8OkITK6hjLrwcg_wookfOE3q_olQMyBHByb2RQgL2jAVoQ00WCznJ-scxvUzhlW2g5hHoCinyCAQJuag&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
-    },
-    {
-      "id": "shi_1937192774",
-      "index": 22,
-      "message_id": 1937192774,
-      "real_seq": "23721",
-      "time": 1784794495,
-      "user_id": 1620275918,
-      "sender": "清俳彡泛咕生",
-      "types": [
-        "image"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "image",
-          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhTLhxoNdt42-hFufJWYFfpCJmfCHxiN9gUg_woon-Dgzq3olQMyBHByb2RQgL2jAVoQN6B1nJfQ95qCD9GKVooTS3oCyB6CAQJneg&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
-          "local": "media/shi_1937192774_img1.jpg"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=B4984F8D65FAD9EB248F01476685BCD5.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhTLhxoNdt42-hFufJWYFfpCJmfCHxiN9gUg_woon-Dgzq3olQMyBHByb2RQgL2jAVoQN6B1nJfQ95qCD9GKVooTS3oCyB6CAQJneg&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
-    },
-    {
-      "id": "shi_1955671562",
-      "index": 23,
-      "message_id": 1955671562,
-      "real_seq": "23720",
-      "time": 1784794089,
-      "user_id": 1942753990,
-      "sender": "　",
-      "types": [
-        "video"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "video",
-          "url": "https://multimedia.nt.qq.com.cn:443/download?appid=1415&format=origin&orgfmt=t264&spec=0&client_proto=ntv2&client_appid=537352525&client_type=win&client_ver=9.9.30-48762&client_down_type=auto&client_aio_type=aio&rkey=CAESqAHR3U1pdwYa7_7ASO63CwaO5D_4whfAG4jNxtkXaqt7FDY0wTU0F6PDyab0udL6kYgu-ZPfKYoTtdZJhNWt0lSgOr3k4SQ-mJDhiEsY0eyGYpWHiExnfqxlK2C97y1o1QShi19dUQQfe30JjadgOyr4Kr6D_JWh21dx1XnIOUPOFCOzBBEufwVfV6yZdAOf4Q79VwC9-2FUzoRQMxPyFuWK1aFdapnAEaE",
-          "local": "media/shi_1955671562_vid1.mp4",
-          "file": "1f67a33aa1ced920fdaee335d2b3a7d7.mp4"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:video,file=1f67a33aa1ced920fdaee335d2b3a7d7.mp4,url=https://multimedia.nt.qq.com.cn:443/download?appid=1415&amp;format=origin&amp;orgfmt=t264&amp;spec=0&amp;client_proto=ntv2&amp;client_appid=537352525&amp;client_type=win&amp;client_ver=9.9.30-48762&amp;client_down_type=auto&amp;client_aio_type="
-    },
-    {
-      "id": "shi_49161112",
-      "index": 24,
-      "message_id": 49161112,
-      "real_seq": "23719",
-      "time": 1784793738,
-      "user_id": 1620275918,
-      "sender": "清俳彡泛咕生",
-      "types": [
-        "forward"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "forward",
-          "id": "7665630735721606505"
-        }
-      ],
-      "forward_summary": "1. 帝国の絶兇之虎纯丁真一郎: [图片]\n2. 帝国の絶兇之虎纯丁真一郎: [图片]\n3. 帝国の絶兇之虎纯丁真一郎: [图片]\n4. 帝国の絶兇之虎纯丁真一郎: [图片]\n5. 帝国の絶兇之虎纯丁真一郎: [图片]\n6. 帝国の絶兇之虎纯丁真一郎: [图片]\n7. 帝国の絶兇之虎纯丁真一郎: [图片]\n8. 帝国の絶兇之虎纯丁真一郎: [图片]\n…共 17 条",
-      "raw_preview": "[CQ:forward,id=7665630735721606505,content=&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;"
-    },
-    {
-      "id": "shi_1691325017",
-      "index": 25,
-      "message_id": 1691325017,
-      "real_seq": "23718",
-      "time": 1784793242,
-      "user_id": 764265237,
-      "sender": "阿尔托莉娅·潘德拉贡",
-      "types": [
-        "video"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "video",
-          "url": "https://multimedia.nt.qq.com.cn:443/download?appid=1415&format=origin&orgfmt=t264&spec=0&client_proto=ntv2&client_appid=537352525&client_type=win&client_ver=9.9.30-48762&client_down_type=auto&client_aio_type=aio&rkey=CAISqAGkgXpI1RtXzOVIx-Ueg4G4d8awtDswHbTi5cq-xXgACbeGOVBCSJIie0_DE5wRwu_tz1D5AjpXuHVxEIr-PoELQ1sNts9UFIzprAIPvMsAQlyoM6LFRQ4ldyTzZ9qhFoXTIQenkb1EEqf3HXjxw_2e4ZWwNDh9YKbUM5ihs3AYfZctERYbrP-Dm11lI6uw7_si9AF8i3lrYCTOOtQVPXQHvmbky-zwPXc",
-          "local": "media/shi_1691325017_vid1.mp4",
-          "file": "522b5f82ad717e23b07bbe63c5f0ab8c.mp4"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:video,file=522b5f82ad717e23b07bbe63c5f0ab8c.mp4,url=https://multimedia.nt.qq.com.cn:443/download?appid=1415&amp;format=origin&amp;orgfmt=t264&amp;spec=0&amp;client_proto=ntv2&amp;client_appid=537352525&amp;client_type=win&amp;client_ver=9.9.30-48762&amp;client_down_type=auto&amp;client_aio_type="
-    },
-    {
-      "id": "shi_2026946398",
-      "index": 26,
-      "message_id": 2026946398,
-      "real_seq": "23717",
-      "time": 1784792446,
-      "user_id": 1942753990,
-      "sender": "　",
-      "types": [
-        "image"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "image",
-          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhT6ylwEmpnf9lbQWpJ7xXupYEGgjRjm6Aog_wooho7Y_aXolQMyBHByb2RQgL2jAVoQp-sr45yHO5Pm3Ngw_C2fg3oCb8mCAQJuag&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
-          "local": "media/shi_2026946398_img1.jpg"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=1D97FF6A4D76B72BD61B47549A1D234C.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhT6ylwEmpnf9lbQWpJ7xXupYEGgjRjm6Aog_wooho7Y_aXolQMyBHByb2RQgL2jAVoQp-sr45yHO5Pm3Ngw_C2fg3oCb8mCAQJuag&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
-    },
-    {
-      "id": "shi_417698044",
-      "index": 27,
-      "message_id": 417698044,
-      "real_seq": "23716",
-      "time": 1784792062,
-      "user_id": 1942753990,
-      "sender": "　",
-      "types": [
-        "forward"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "forward",
-          "id": "7665623537237223086"
-        }
-      ],
-      "forward_summary": "1. 　: [图片]\n2. 奇迹: @Metalheart 我去\n3. 奇迹: 那我换个女生性别小号进去\n4. 奇迹: 岂不是能看女同聊天\n5. 　: 别去\n6. 　: ？",
-      "raw_preview": "[CQ:forward,id=7665623537237223086,content=&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;&#44;&#91;object Object&#93;]"
-    },
-    {
-      "id": "shi_1842270199",
-      "index": 28,
-      "message_id": 1842270199,
-      "real_seq": "23715",
-      "time": 1784791985,
-      "user_id": 1942753990,
-      "sender": "　",
-      "types": [
-        "image"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "image",
-          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhTbd2TIkZ57XkmthbmqJoTmR5ikKhjUgAcg_woo2vyMoqTolQMyBHByb2RQgL2jAVoQs72xRFLGtDbzFPv4Qo8sYXoCyjeCAQJuag&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
-          "local": "media/shi_1842270199_img1.jpg"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=AFDF1A57D1C4C746A02375254F4C4808.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhTbd2TIkZ57XkmthbmqJoTmR5ikKhjUgAcg_woo2vyMoqTolQMyBHByb2RQgL2jAVoQs72xRFLGtDbzFPv4Qo8sYXoCyjeCAQJuag&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
-    },
-    {
-      "id": "shi_423405477",
-      "index": 29,
-      "message_id": 423405477,
-      "real_seq": "23714",
-      "time": 1784791689,
-      "user_id": 1942753990,
-      "sender": "　",
-      "types": [
-        "image"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "image",
-          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhQPr5Is-uLd4Zjiahl1IRcNblMVthjyjggg_woo_d7ulKPolQMyBHByb2RQgL2jAVoQp2rWRIPEaL04BzxHd9rHVnoCKBGCAQJuag&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
-          "local": "media/shi_423405477_img1.jpg"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=9BF63DEACAA63128192E9F7ADC26988E.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhQPr5Is-uLd4Zjiahl1IRcNblMVthjyjggg_woo_d7ulKPolQMyBHByb2RQgL2jAVoQp2rWRIPEaL04BzxHd9rHVnoCKBGCAQJuag&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
-    },
-    {
-      "id": "shi_1806267970",
-      "index": 30,
-      "message_id": 1806267970,
-      "real_seq": "23713",
-      "time": 1784791674,
-      "user_id": 1942753990,
-      "sender": "　",
-      "types": [
-        "image"
-      ],
-      "text": "",
-      "media": [
-        {
-          "type": "image",
-          "url": "https://multimedia.nt.qq.com.cn/download?appid=1407&fileid=EhRSIoT9SCf2jIcT7NX2f3Mk4JuXcBiTzAwg_wooy-nGjaPolQMyBHByb2RQgL2jAVoQiMomyBrEgbN8IJRtR8vbVnoC1n2CAQJuag&rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9qr7IkF-rAyINw",
-          "local": "media/shi_1806267970_img1.jpg"
-        }
-      ],
-      "forward_summary": "",
-      "raw_preview": "[CQ:image,file=8838CEADFCBAD2427A3B9E2DB02C45FE.jpg,sub_type=0,url=https://multimedia.nt.qq.com.cn/download?appid=1407&amp;fileid=EhRSIoT9SCf2jIcT7NX2f3Mk4JuXcBiTzAwg_wooy-nGjaPolQMyBHByb2RQgL2jAVoQiMomyBrEgbN8IJRtR8vbVnoC1n2CAQJuag&amp;rkey=CAQSMNRRC76IRscwVefmR2XOyHAyZxiqu-WZl84n_QofnFxfwlAgEkdO9q"
+      "from_forward": null,
+      "parent_sender": null,
+      "index": 30
     }
   ]
 }

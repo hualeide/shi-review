@@ -140,6 +140,9 @@ html, body {
   font-size: 0.9rem;
 }
 
+#syncStatus[data-ok="1"] { color: var(--good); }
+#syncStatus[data-ok="0"] { color: var(--bad); }
+
 .scores {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
