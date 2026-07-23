@@ -1,13 +1,6 @@
-﻿# 史审核 · GitHub 网盘
+﻿# 史记档
 
-纯看为主，打分不挡翻页。
+答题卡缩略图浏览 · GitHub 当网盘归档。默认只看**聊天记录**。
 
-- 预览：https://hualeide.github.io/shi-review/
+- 预览：https://hualeide.github.io/shi-review/?v=11
 - 流程：见 [WORKFLOW.md](./WORKFLOW.md)
-
-```powershell
-python scripts\fetch_latest_shi.py --day yesterday
-python scripts\repair_forwards.py
-python scripts\upload_github.py
-python scripts\push_items_to_group.py   # 推三人群（已去重）
-```
