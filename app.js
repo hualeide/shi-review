@@ -490,7 +490,7 @@ function renderChatRecord(item) {
   return `
     <div class="chat-head">
       <div class="chat-head-main">
-        <div class="chat-head-icon">💬</div>
+        <div class="chat-head-icon" aria-hidden="true"></div>
         <div>
           <h2>${escapeHtml(item.title || "聊天记录")}</h2>
           <div class="sub">${item.index} / ${items.length} · ${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
