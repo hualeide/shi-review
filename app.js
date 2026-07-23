@@ -44,6 +44,16 @@ function escapeHtml(s) {
     .replaceAll('"', "&quot;");
 }
 
+/** 空白昵称 / QQ用户 时回退到 QQ 号，避免「有的显示有的空白」 */
+function displayName(person) {
+  const raw = String(person?.sender ?? person?.nickname ?? "").replace(/[\s\u3000]+/g, "");
+  const uid = person?.user_id;
+  if (raw && raw !== "QQ用户") return raw;
+  if (uid) return String(uid);
+  if (raw === "QQ用户") return "QQ用户";
+  return "未知用户";
+}
+
 function avatarChar(name) {
   const s = String(name || "?").trim();
   return s ? s[0] : "?";
@@ -61,6 +71,45 @@ function fmtTime(ts) {
   } catch {
     return "";
   }
+}
+
+function ensureLightbox() {
+  let box = document.getElementById("lightbox");
+  if (box) return box;
+  box = document.createElement("div");
+  box.id = "lightbox";
+  box.hidden = true;
+  box.innerHTML = `
+    <button type="button" class="lightbox-close" aria-label="关闭">×</button>
+    <img alt="" />
+  `;
+  document.body.appendChild(box);
+  box.addEventListener("click", (e) => {
+    if (e.target === box || e.target.classList.contains("lightbox-close")) {
+      closeLightbox();
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeLightbox();
+  });
+  return box;
+}
+
+function openLightbox(src) {
+  if (!src) return;
+  const box = ensureLightbox();
+  const img = box.querySelector("img");
+  img.src = src;
+  box.hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+function closeLightbox() {
+  const box = document.getElementById("lightbox");
+  if (!box) return;
+  box.hidden = true;
+  box.querySelector("img").src = "";
+  document.body.style.overflow = "";
 }
 
 function setSync(text, ok) {
@@ -119,12 +168,13 @@ async function submitScoreRemote(payload) {
 }
 
 function renderThreadLine(line) {
+  const name = displayName(line);
   const mediaHtml = (line.media || [])
     .map((m) => {
       const src = mediaSrc(m);
       if (m.type === "image") {
         return src
-          ? `<img src="${src}" alt="" loading="lazy" />`
+          ? `<img class="zoomable" src="${src}" alt="" loading="lazy" data-full="${src}" />`
           : `<span class="hint">[图片]</span>`;
       }
       if (m.type === "video") {
@@ -138,10 +188,10 @@ function renderThreadLine(line) {
 
   return `
     <div class="msg">
-      <div class="avatar">${escapeHtml(avatarChar(line.sender))}</div>
+      <div class="avatar">${escapeHtml(avatarChar(name))}</div>
       <div class="msg-body">
         <div class="msg-meta">
-          <span class="name">${escapeHtml(line.sender || "")}</span>
+          <span class="name">${escapeHtml(name)}</span>
           <span class="time">${escapeHtml(fmtTime(line.time))}</span>
         </div>
         ${line.text ? `<div class="bubble">${escapeHtml(line.text)}</div>` : ""}
@@ -155,6 +205,7 @@ function renderItem(item) {
   const thread = item.thread || [];
   const kindLabel = item.kind === "chat_record" ? "聊天记录" : "单条";
   const when = fmtTime(item.time);
+  const outerName = displayName(item);
   const prev = scores[item.id];
   const prevLine = prev
     ? `<div class="current-score">已打：${prev.score}${prev.skip ? "（跳过）" : ""}</div>`
@@ -164,7 +215,7 @@ function renderItem(item) {
     <div class="chat-head">
       <div>
         <h2>${escapeHtml(item.title || kindLabel)}</h2>
-        <div class="sub">${item.index} / ${items.length} · 来自 ${escapeHtml(item.sender || "")} · ${escapeHtml(when)}</div>
+        <div class="sub">${item.index} / ${items.length} · 来自 ${escapeHtml(outerName)} · ${escapeHtml(when)}</div>
       </div>
       <div class="tags">
         <span class="tag">${kindLabel}</span>
@@ -176,6 +227,13 @@ function renderItem(item) {
     </div>
     ${prevLine}
   `;
+
+  stage.querySelectorAll("img.zoomable").forEach((img) => {
+    img.addEventListener("click", (e) => {
+      e.preventDefault();
+      openLightbox(img.dataset.full || img.src);
+    });
+  });
 }
 
 function updateMeta() {

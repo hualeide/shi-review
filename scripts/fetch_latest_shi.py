@@ -127,6 +127,15 @@ def get_forward_nodes(fid: str) -> list[dict]:
     return []
 
 
+def nice_name(nickname, user_id) -> str:
+    raw = str(nickname or "").replace("\u3000", "").strip()
+    if raw and raw != "QQ用户":
+        return raw
+    if user_id:
+        return str(user_id)
+    return raw or "未知用户"
+
+
 def node_to_line(node: dict, prefix: str, depth: int = 0) -> list[dict]:
     """把一个转发节点变成聊天行；若仍是嵌套转发则展开为多行。"""
     segs = node.get("message") or []
@@ -144,7 +153,8 @@ def node_to_line(node: dict, prefix: str, depth: int = 0) -> list[dict]:
     media = media_from_segs(segs, prefix)
     if not text and not media:
         return []
-    sender = ((node.get("sender") or {}).get("nickname")) or str(node.get("user_id") or "用户")
+    nick = ((node.get("sender") or {}).get("card") or (node.get("sender") or {}).get("nickname") or "")
+    sender = nice_name(nick, node.get("user_id"))
     return [
         {
             "sender": sender,
@@ -211,7 +221,8 @@ def msg_to_item(msg: dict) -> dict | None:
     mid = int(msg.get("message_id") or 0)
     segs = msg.get("message") or []
     fid = forward_id_from_segs(segs)
-    sender = ((msg.get("sender") or {}).get("nickname")) or str(msg.get("user_id") or "")
+    nick = ((msg.get("sender") or {}).get("card") or (msg.get("sender") or {}).get("nickname") or "")
+    sender = nice_name(nick, msg.get("user_id"))
 
     if fid:
         nodes = get_forward_nodes(fid)
