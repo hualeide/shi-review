@@ -499,7 +499,11 @@ function renderSimpleItem(item) {
     .join("");
 
   return `
-    <div class="simple-meta">${cursor + 1}/${visible.length} · ${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
+    <div class="detail-toolbar">
+      <button type="button" class="btn-menu" data-action="menu">← 回到菜单</button>
+      <span class="detail-pos">${cursor + 1}/${visible.length}</span>
+    </div>
+    <div class="simple-meta">${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
     <div class="simple-body">
       ${line.text ? `<p class="simple-text">${escapeHtml(line.text)}</p>` : ""}
       ${mediaHtml ? `<div class="simple-media-wrap">${mediaHtml}</div>` : (!line.text ? '<p class="loading">无内容</p>' : "")}
@@ -513,12 +517,16 @@ function renderChatRecord(item) {
     .map((line, i) => renderThreadLine(line, i > 0 ? thread[i - 1] : null))
     .join("");
   return `
+    <div class="detail-toolbar">
+      <button type="button" class="btn-menu" data-action="menu">← 回到菜单</button>
+      <span class="detail-pos">${cursor + 1} / ${visible.length}</span>
+    </div>
     <div class="chat-head">
       <div class="chat-head-main">
         <div class="chat-head-icon" aria-hidden="true"></div>
         <div>
           <h2>${escapeHtml(item.title || "聊天记录")}</h2>
-          <div class="sub">${cursor + 1} / ${visible.length} · ${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
+          <div class="sub">${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
         </div>
       </div>
       <div class="tags">
@@ -663,6 +671,9 @@ function renderItem(item) {
     stage.innerHTML = renderSimpleItem(item) + prevLine;
   }
   bindZoomables(stage);
+  stage.querySelectorAll('[data-action="menu"]').forEach((btn) => {
+    btn.addEventListener("click", () => renderSheet());
+  });
 }
 
 function updateMeta() {
