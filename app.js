@@ -3,12 +3,17 @@ const REVIEWER_KEY = "shi-reviewer-name";
 
 const stage = document.getElementById("stage");
 const meta = document.getElementById("meta");
-const scoreBar = document.getElementById("scoreBar");
+const sheetNav = document.getElementById("sheetNav");
+const detailBar = document.getElementById("detailBar");
 const foot = document.getElementById("foot");
 const syncStatus = document.getElementById("syncStatus");
+const appRoot = document.querySelector(".app");
 
 let items = [];
-let cursor = 0;
+let visible = [];
+let cursor = -1;
+let mode = "sheet"; // sheet | detail
+let filter = "record";
 let scores = loadScores();
 let reviewer = localStorage.getItem(REVIEWER_KEY) || "";
 
@@ -36,15 +41,11 @@ function mediaSrc(m) {
   return m.local || m.url || "";
 }
 
-function bindMediaFallback(el, m) {
-  if (!el || !m || !m.local || !m.url) return;
-  el.addEventListener(
-    "error",
-    () => {
-      if (el.getAttribute("src") !== m.url) el.setAttribute("src", m.url);
-    },
-    { once: true },
-  );
+function mediaAttrs(m) {
+  const src = mediaSrc(m);
+  if (!src) return "";
+  const fb = m.local && m.url ? ` data-fallback="${escapeHtml(m.url)}"` : "";
+  return `src="${src}"${fb}`;
 }
 
 function escapeHtml(s) {
@@ -418,12 +419,12 @@ function renderThreadLine(line, prevLine) {
       const src = mediaSrc(m);
       if (m.type === "image") {
         return src
-          ? `<img class="zoomable cl-img" src="${src}" alt="" loading="lazy" data-full="${src}" />`
+          ? `<img class="zoomable cl-img" ${mediaAttrs(m)} alt="" loading="lazy" data-full="${src}" />`
           : `<span class="cl-hint">[图片]</span>`;
       }
       if (m.type === "video") {
         return src
-          ? `<video class="cl-video" src="${src}" controls playsinline></video>`
+          ? `<video class="cl-video" ${mediaAttrs(m)} controls playsinline></video>`
           : `<span class="cl-hint">[视频]</span>`;
       }
       return "";
@@ -462,6 +463,19 @@ function bindZoomables(root) {
       openLightbox(img.dataset.full || img.src, list);
     });
   });
+  root.querySelectorAll("[data-fallback]").forEach((el) => {
+    el.addEventListener(
+      "error",
+      () => {
+        const fb = el.getAttribute("data-fallback");
+        if (fb && el.getAttribute("src") !== fb) {
+          el.setAttribute("src", fb);
+          if (el.dataset.full) el.dataset.full = fb;
+        }
+      },
+      { once: true },
+    );
+  });
 }
 
 function renderSimpleItem(item) {
@@ -472,12 +486,12 @@ function renderSimpleItem(item) {
       const src = mediaSrc(m);
       if (m.type === "image") {
         return src
-          ? `<img class="zoomable simple-media" src="${src}" alt="" loading="lazy" data-full="${src}" />`
+          ? `<img class="zoomable simple-media" ${mediaAttrs(m)} alt="" loading="lazy" data-full="${src}" />`
           : `<p class="loading">[图片加载失败]</p>`;
       }
       if (m.type === "video") {
         return src
-          ? `<video class="simple-media" src="${src}" controls playsinline></video>`
+          ? `<video class="simple-media" ${mediaAttrs(m)} controls playsinline></video>`
           : `<p class="loading">[视频]</p>`;
       }
       return "";
@@ -485,7 +499,7 @@ function renderSimpleItem(item) {
     .join("");
 
   return `
-    <div class="simple-meta">${item.index}/${items.length} · ${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
+    <div class="simple-meta">${cursor + 1}/${visible.length} · ${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
     <div class="simple-body">
       ${line.text ? `<p class="simple-text">${escapeHtml(line.text)}</p>` : ""}
       ${mediaHtml ? `<div class="simple-media-wrap">${mediaHtml}</div>` : (!line.text ? '<p class="loading">无内容</p>' : "")}
@@ -504,7 +518,7 @@ function renderChatRecord(item) {
         <div class="chat-head-icon" aria-hidden="true"></div>
         <div>
           <h2>${escapeHtml(item.title || "聊天记录")}</h2>
-          <div class="sub">${item.index} / ${items.length} · ${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
+          <div class="sub">${cursor + 1} / ${visible.length} · ${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
         </div>
       </div>
       <div class="tags">
@@ -517,10 +531,130 @@ function renderChatRecord(item) {
   `;
 }
 
+function collectThumbMedia(item, limit = 4) {
+  const out = [];
+  for (const line of item?.thread || []) {
+    for (const m of line.media || []) {
+      if (m.type !== "image" && m.type !== "video") continue;
+      if (!mediaSrc(m)) continue;
+      out.push(m);
+      if (out.length >= limit) return out;
+    }
+  }
+  return out;
+}
+
+function cellTitle(item) {
+  if (item.kind === "chat_record") {
+    const n = (item.thread || []).length;
+    return item.title || `聊天记录（${n}条）`;
+  }
+  const line = (item.thread || [])[0] || {};
+  const t = String(line.text || "").trim();
+  if (t) return t.slice(0, 36);
+  return displayName(item);
+}
+
+function applyFilter() {
+  if (filter === "record") visible = items.filter((i) => i.kind === "chat_record");
+  else if (filter === "single") visible = items.filter((i) => i.kind !== "chat_record");
+  else visible = items.slice();
+}
+
+function renderSheet() {
+  mode = "sheet";
+  cursor = -1;
+  appRoot.classList.remove("is-detail");
+  stage.classList.add("stage-sheet");
+  sheetNav.hidden = false;
+  detailBar.hidden = true;
+  foot.hidden = false;
+
+  applyFilter();
+  const marked = Object.keys(scores).length;
+  meta.textContent = `${visible.length} 格 · 库 ${items.length} · 已标 ${marked}`;
+
+  if (!visible.length) {
+    stage.innerHTML = `<p class="loading">这一栏没有条目</p>`;
+    return;
+  }
+
+  stage.innerHTML = `<div class="answer-sheet" id="answerSheet"></div>`;
+  const sheet = document.getElementById("answerSheet");
+  const frag = document.createDocumentFragment();
+
+  visible.forEach((item, i) => {
+    const thumbs = collectThumbMedia(item, 4);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "cell" + (scores[item.id] ? " is-marked" : "");
+    btn.dataset.id = item.id;
+
+    const no = String(i + 1).padStart(2, "0");
+    const kind = item.kind === "chat_record" ? "记录" : "单条";
+    const lines = (item.thread || []).length;
+
+    let thumbHtml;
+    if (!thumbs.length) {
+      thumbHtml = `<div class="cell-thumb empty">${kind}</div>`;
+    } else {
+      const cls = thumbs.length === 1 ? "cell-thumb one" : "cell-thumb";
+      thumbHtml = `<div class="${cls}">${thumbs
+        .map((m) => {
+          const src = mediaSrc(m);
+          const fb = m.local && m.url ? ` data-fallback="${escapeHtml(m.url)}"` : "";
+          return `<img src="${src}"${fb} alt="" loading="lazy" />`;
+        })
+        .join("")}</div>`;
+    }
+
+    btn.innerHTML = `
+      <div class="cell-no"><span>#${no}</span><span>${kind}</span></div>
+      ${thumbHtml}
+      <div class="cell-cap">
+        <strong>${escapeHtml(cellTitle(item))}</strong>
+        <span>${lines} 条 · ${escapeHtml(fmtTime(item.time))}</span>
+      </div>
+    `;
+    frag.appendChild(btn);
+  });
+
+  sheet.appendChild(frag);
+  sheet.querySelectorAll("[data-fallback]").forEach((el) => {
+    el.addEventListener(
+      "error",
+      () => {
+        const fb = el.getAttribute("data-fallback");
+        if (fb && el.getAttribute("src") !== fb) el.setAttribute("src", fb);
+      },
+      { once: true },
+    );
+  });
+  sheet.addEventListener("click", (e) => {
+    const cell = e.target.closest(".cell");
+    if (!cell) return;
+    const idx = visible.findIndex((it) => it.id === cell.dataset.id);
+    if (idx >= 0) openDetail(idx);
+  });
+}
+
+function openDetail(index) {
+  if (index < 0 || index >= visible.length) return;
+  mode = "detail";
+  cursor = index;
+  appRoot.classList.add("is-detail");
+  stage.classList.remove("stage-sheet");
+  sheetNav.hidden = true;
+  detailBar.hidden = false;
+  foot.hidden = true;
+  renderItem(visible[cursor]);
+  updateMeta();
+}
+
 function renderItem(item) {
   const prev = scores[item.id];
   const prevLine = prev
-    ? `<div class="current-score">已打：${prev.score}${prev.skip ? "（跳过）" : ""}</div>`
+    ? `<div class="current-score">已标：${prev.score}${prev.skip ? "（跳过）" : ""}</div>`
     : "";
 
   if (item.kind === "chat_record") {
@@ -532,42 +666,23 @@ function renderItem(item) {
 }
 
 function updateMeta() {
-  const done = Object.keys(scores).length;
-  meta.textContent = `${cursor + 1}/${items.length} · 已评 ${done} · ${reviewer || "未命名"}`;
-}
-
-function showDone() {
-  scoreBar.hidden = true;
-  const vals = Object.values(scores).filter((x) => !x.skip).map((x) => x.score);
-  const avg = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2) : "-";
-  stage.innerHTML = `
-    <div class="done">
-      <p><strong>本轮审完</strong></p>
-      <p>共 ${items.length} 份聊天记录，已记录 ${Object.keys(scores).length}，均分 ${avg}</p>
-      <p>打分已自动回收 · <a href="scores.html" style="color:var(--accent)">看汇总</a></p>
-    </div>
-  `;
-  meta.textContent = `完成 · 已评 ${Object.keys(scores).length}`;
-  foot.hidden = false;
+  if (mode !== "detail" || cursor < 0) return;
+  const item = visible[cursor];
+  meta.textContent = `${cursor + 1}/${visible.length} · ${item?.kind === "chat_record" ? "记录" : "单条"}`;
 }
 
 function go(to) {
-  if (!items.length) return;
-  if (to >= items.length) {
-    cursor = items.length;
-    showDone();
+  if (mode !== "detail" || !visible.length) return;
+  if (to < 0 || to >= visible.length) {
+    renderSheet();
     return;
   }
-  if (to < 0) to = 0;
-  cursor = to;
-  renderItem(items[cursor]);
-  updateMeta();
-  scoreBar.hidden = false;
-  foot.hidden = false;
+  openDetail(to);
 }
 
 async function rate(score, skip = false) {
-  const item = items[cursor];
+  if (mode !== "detail" || cursor < 0) return;
+  const item = visible[cursor];
   if (!item) return;
   ensureReviewer();
   const payload = {
@@ -583,11 +698,14 @@ async function rate(score, skip = false) {
   };
   scores[item.id] = payload;
   saveScores();
-  // 纯看优先：先翻下一条，打分后台扔，不卡页面
-  go(cursor + 1);
-  setSync("已记分", true);
+  setSync("已标记", true);
+  // 标记后仍停在本条，方便归档浏览；不强制跳下一条
+  const mark = stage.querySelector(".current-score");
+  const html = `已标：${payload.score}${payload.skip ? "（跳过）" : ""}`;
+  if (mark) mark.textContent = html;
+  else stage.insertAdjacentHTML("beforeend", `<div class="current-score">${html}</div>`);
   submitScoreRemote(payload).then((result) => {
-    if (!result.ok) setSync(`后台回收失败 · ${result.detail}`, false);
+    if (!result.ok) setSync(`后台失败 · ${result.detail}`, false);
   });
 }
 
@@ -597,8 +715,15 @@ document.getElementById("scores").addEventListener("click", (e) => {
   rate(Number(btn.dataset.score));
 });
 
-document.getElementById("btnSkip").addEventListener("click", () => rate(0, true));
-document.getElementById("btnBack").addEventListener("click", () => go(cursor - 1));
+document.getElementById("btnBackSheet").addEventListener("click", () => renderSheet());
+
+sheetNav.addEventListener("click", (e) => {
+  const tab = e.target.closest(".tab");
+  if (!tab) return;
+  filter = tab.dataset.filter || "record";
+  sheetNav.querySelectorAll(".tab").forEach((t) => t.classList.toggle("is-on", t === tab));
+  renderSheet();
+});
 
 document.getElementById("btnExport").addEventListener("click", () => {
   const payload = {
@@ -614,23 +739,20 @@ document.getElementById("btnExport").addEventListener("click", () => {
   URL.revokeObjectURL(a.href);
 });
 
-document.getElementById("btnReset").addEventListener("click", () => {
-  if (!confirm("清空本机打分记录？")) return;
-  scores = {};
-  saveScores();
-  go(0);
-});
-
 window.addEventListener("keydown", (e) => {
   if (gallery.open) return;
   if (e.target.matches("input, textarea")) return;
+  if (mode === "sheet") return;
+  if (e.key === "Escape") {
+    renderSheet();
+    return;
+  }
   if (e.key >= "1" && e.key <= "5") rate(Number(e.key));
-  if (e.key === "ArrowRight" || e.key === "s") rate(0, true);
+  if (e.key === "ArrowRight") go(cursor + 1);
   if (e.key === "ArrowLeft") go(cursor - 1);
 });
 
 async function boot() {
-  ensureReviewer();
   const res = await fetch("data/items.json", { cache: "no-store" });
   if (!res.ok) throw new Error("无法加载 data/items.json");
   const data = await res.json();
@@ -639,9 +761,9 @@ async function boot() {
     stage.innerHTML = `<p class="loading">没有条目。先跑 scripts/fetch_latest_shi.py</p>`;
     return;
   }
-  let start = items.findIndex((it) => !scores[it.id]);
-  if (start < 0) start = items.length;
-  go(start);
+  // 记录优先：库内已按 records-first 排过；答题卡默认只看记录
+  filter = "record";
+  renderSheet();
 }
 
 boot().catch((err) => {
