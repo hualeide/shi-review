@@ -71,16 +71,60 @@ html, body {
   align-items: center;
 }
 
-.chat-head h2 {
+.chat-head h2,
+.simple-head h2 {
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
 }
 
-.chat-head .sub {
+.chat-head .sub,
+.simple-head .sub {
   color: var(--muted);
   font-size: 0.8rem;
   margin-top: 2px;
+}
+
+.simple-head {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  background: #161920;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.simple-body {
+  padding: 18px 16px 22px;
+  background: var(--chat-bg);
+  flex: 1;
+}
+
+.simple-text {
+  margin: 0 0 14px;
+  font-size: 1.15rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.simple-media-wrap {
+  display: grid;
+  gap: 10px;
+}
+
+.simple-media {
+  width: 100%;
+  max-height: min(70vh, 720px);
+  object-fit: contain;
+  background: #0a0c10;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+
+img.simple-media.zoomable {
+  cursor: zoom-in;
 }
 
 .chat-thread {

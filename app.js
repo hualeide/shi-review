@@ -201,39 +201,81 @@ function renderThreadLine(line) {
   `;
 }
 
-function renderItem(item) {
-  const thread = item.thread || [];
-  const kindLabel = item.kind === "chat_record" ? "聊天记录" : "单条";
-  const when = fmtTime(item.time);
-  const outerName = displayName(item);
-  const prev = scores[item.id];
-  const prevLine = prev
-    ? `<div class="current-score">已打：${prev.score}${prev.skip ? "（跳过）" : ""}</div>`
-    : "";
+function bindZoomables(root) {
+  root.querySelectorAll("img.zoomable").forEach((img) => {
+    img.addEventListener("click", (e) => {
+      e.preventDefault();
+      openLightbox(img.dataset.full || img.src);
+    });
+  });
+}
 
-  stage.innerHTML = `
+function renderSimpleItem(item) {
+  const line = (item.thread || [])[0] || {};
+  const types = item.types || [];
+  const mediaHtml = (line.media || [])
+    .map((m) => {
+      const src = mediaSrc(m);
+      if (m.type === "image") {
+        return src
+          ? `<img class="zoomable simple-media" src="${src}" alt="" loading="lazy" data-full="${src}" />`
+          : `<p class="loading">[图片加载失败]</p>`;
+      }
+      if (m.type === "video") {
+        return src
+          ? `<video class="simple-media" src="${src}" controls playsinline></video>`
+          : `<p class="loading">[视频]</p>`;
+      }
+      return "";
+    })
+    .join("");
+
+  return `
+    <div class="simple-head">
+      <div>
+        <h2>${escapeHtml(types.includes("image") ? "图片" : types.includes("video") ? "视频" : "文字")}</h2>
+        <div class="sub">${item.index} / ${items.length} · ${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
+      </div>
+      <div class="tags">${types.map((t) => `<span class="tag">${t}</span>`).join("")}</div>
+    </div>
+    <div class="simple-body">
+      ${line.text ? `<p class="simple-text">${escapeHtml(line.text)}</p>` : ""}
+      ${mediaHtml ? `<div class="simple-media-wrap">${mediaHtml}</div>` : ""}
+    </div>
+  `;
+}
+
+function renderChatRecord(item) {
+  const thread = item.thread || [];
+  return `
     <div class="chat-head">
       <div>
-        <h2>${escapeHtml(item.title || kindLabel)}</h2>
-        <div class="sub">${item.index} / ${items.length} · 来自 ${escapeHtml(outerName)} · ${escapeHtml(when)}</div>
+        <h2>${escapeHtml(item.title || "聊天记录")}</h2>
+        <div class="sub">${item.index} / ${items.length} · 来自 ${escapeHtml(displayName(item))} · ${escapeHtml(fmtTime(item.time))}</div>
       </div>
       <div class="tags">
-        <span class="tag">${kindLabel}</span>
+        <span class="tag">聊天记录</span>
         <span class="tag">${thread.length} 条消息</span>
       </div>
     </div>
     <div class="chat-thread" id="chatThread">
       ${thread.map(renderThreadLine).join("") || '<p class="loading">空记录</p>'}
     </div>
-    ${prevLine}
   `;
+}
 
-  stage.querySelectorAll("img.zoomable").forEach((img) => {
-    img.addEventListener("click", (e) => {
-      e.preventDefault();
-      openLightbox(img.dataset.full || img.src);
-    });
-  });
+function renderItem(item) {
+  const prev = scores[item.id];
+  const prevLine = prev
+    ? `<div class="current-score">已打：${prev.score}${prev.skip ? "（跳过）" : ""}</div>`
+    : "";
+
+  if (item.kind === "chat_record") {
+    stage.innerHTML = renderChatRecord(item) + prevLine;
+  } else {
+    stage.innerHTML = renderSimpleItem(item) + prevLine;
+  }
+  bindZoomables(stage);
 }
 
 function updateMeta() {
