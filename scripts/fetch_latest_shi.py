@@ -112,19 +112,39 @@ def media_from_segs(segs, prefix: str) -> list[dict]:
     return media
 
 
-def get_forward_nodes(fid: str) -> list[dict]:
-    for params in ({"message_id": fid}, {"id": fid}):
-        try:
-            r = call("get_forward_msg", params, timeout=45)
-        except Exception as e:
-            print(f"  get_forward_msg fail {params}: {e}")
-            continue
-        if r.get("status") != "ok":
-            continue
-        nodes = (r.get("data") or {}).get("messages") or []
-        if isinstance(nodes, list) and nodes:
-            return nodes
+def get_forward_nodes(fid: str | None, embedded: list | None = None) -> list[dict]:
+    if fid:
+        for params in ({"message_id": fid}, {"id": fid}):
+            try:
+                r = call("get_forward_msg", params, timeout=45)
+            except Exception as e:
+                print(f"  get_forward_msg fail {params}: {e}")
+                continue
+            if r.get("status") != "ok":
+                continue
+            nodes = (r.get("data") or {}).get("messages") or []
+            if isinstance(nodes, list) and nodes:
+                return nodes
+    # 嵌套转发 API 常失败，用节点自带 content
+    if isinstance(embedded, list) and embedded:
+        print(f"  use embedded content ({len(embedded)} nodes)")
+        return embedded
     return []
+
+
+def forward_payload_from_segs(segs) -> tuple[str | None, list | None]:
+    if not isinstance(segs, list):
+        return None, None
+    for seg in segs:
+        if not isinstance(seg, dict) or seg.get("type") not in ("forward", "node"):
+            continue
+        data = seg.get("data") or {}
+        embedded = data.get("content") if isinstance(data.get("content"), list) else None
+        fid = data.get("id")
+        if fid is None and not isinstance(data.get("content"), list):
+            fid = data.get("content")
+        return (str(fid) if fid else None), embedded
+    return None, None
 
 
 def nice_name(nickname, user_id) -> str:
@@ -139,12 +159,15 @@ def nice_name(nickname, user_id) -> str:
 def node_to_line(node: dict, prefix: str, depth: int = 0) -> list[dict]:
     """把一个转发节点变成聊天行；若仍是嵌套转发则展开为多行。"""
     segs = node.get("message") or []
-    nested = forward_id_from_segs(segs)
-    if nested and depth < 3:
+    nested_fid, embedded = forward_payload_from_segs(segs)
+    if (nested_fid or embedded) and depth < 4:
+        children = get_forward_nodes(nested_fid, embedded)
         lines: list[dict] = []
-        for i, child in enumerate(get_forward_nodes(nested)):
+        for i, child in enumerate(children):
             lines.extend(node_to_line(child, f"{prefix}_n{i}", depth + 1))
-        return lines
+        if lines:
+            return lines
+        # 展开失败则继续当普通节点（通常没内容）
 
     text = text_from_segs(segs)
     if not text:
@@ -231,30 +254,39 @@ def should_skip(msg: dict) -> bool:
 def msg_to_item(msg: dict) -> dict | None:
     mid = int(msg.get("message_id") or 0)
     segs = msg.get("message") or []
-    fid = forward_id_from_segs(segs)
+    fid, embedded = forward_payload_from_segs(segs)
     nick = ((msg.get("sender") or {}).get("card") or (msg.get("sender") or {}).get("nickname") or "")
     sender = nice_name(nick, msg.get("user_id"))
 
-    if fid:
-        nodes = get_forward_nodes(fid)
+    if fid or embedded:
+        nodes = get_forward_nodes(fid, embedded)
         print(f"  chat-record {mid}: forward {fid} -> {len(nodes)} nodes")
         thread: list[dict] = []
         for i, node in enumerate(nodes):
             thread.extend(node_to_line(node, f"rec_{mid}_{i}"))
         if not thread:
             return None
+        # 展开后若只有纯图/纯文一行，降级为 single 平铺
+        kind = "chat_record"
+        title = f"聊天记录（{len(thread)}条）"
+        if len(thread) == 1:
+            kind = "single"
+            title = sender or "单条消息"
         return {
             "id": f"shi_{mid}",
-            "kind": "chat_record",
+            "kind": kind,
             "message_id": mid,
             "real_seq": msg.get("real_seq"),
             "time": msg.get("time"),
             "user_id": msg.get("user_id"),
             "sender": sender,
-            "title": f"聊天记录（{len(thread)}条）",
+            "title": title,
             "forward_id": fid,
             "thread": thread,
-            "types": ["forward"],
+            "types": ["forward"] if kind == "chat_record" else (
+                (["text"] if thread[0].get("text") else [])
+                + [m["type"] for m in thread[0].get("media") or []]
+            ),
         }
 
     prefix = f"shi_{mid}"
