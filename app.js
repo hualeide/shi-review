@@ -36,6 +36,17 @@ function mediaSrc(m) {
   return m.local || m.url || "";
 }
 
+function bindMediaFallback(el, m) {
+  if (!el || !m || !m.local || !m.url) return;
+  el.addEventListener(
+    "error",
+    () => {
+      if (el.getAttribute("src") !== m.url) el.setAttribute("src", m.url);
+    },
+    { once: true },
+  );
+}
+
 function escapeHtml(s) {
   return String(s)
     .replaceAll("&", "&amp;")
