@@ -572,10 +572,12 @@ async function rate(score, skip = false) {
   };
   scores[item.id] = payload;
   saveScores();
-  setSync("提交中…", true);
-  const result = await submitScoreRemote(payload);
-  setSync(result.ok ? `已回收 · ${result.detail}` : `回收失败 · ${result.detail}`, result.ok);
+  // 纯看优先：先翻下一条，打分后台扔，不卡页面
   go(cursor + 1);
+  setSync("已记分", true);
+  submitScoreRemote(payload).then((result) => {
+    if (!result.ok) setSync(`后台回收失败 · ${result.detail}`, false);
+  });
 }
 
 document.getElementById("scores").addEventListener("click", (e) => {
