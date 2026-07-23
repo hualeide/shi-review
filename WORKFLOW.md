@@ -15,6 +15,9 @@ cd C:\Users\LENOVO\projects\shi-review
 # 1) 拉某天史进题库（例：昨天）
 python scripts\fetch_latest_shi.py --day yesterday
 
+# 1b) 昨天之前、记录为主（合并转发）
+python scripts\fetch_latest_shi.py --before yesterday --records-only --records-first
+
 # 2) 嵌套转发补全图（可选）
 python scripts\repair_forwards.py
 
