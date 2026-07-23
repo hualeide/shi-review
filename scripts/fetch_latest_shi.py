@@ -353,38 +353,67 @@ def main():
     import argparse
 
     ap = argparse.ArgumentParser()
-    ap.add_argument("--count", type=int, default=TARGET_COUNT, help="最新 N 条（无 --day 时）")
+    ap.add_argument("--count", type=int, default=TARGET_COUNT, help="最新 N 条（无 --day/--before 时）")
     ap.add_argument("--day", default="", help="YYYY-MM-DD / yesterday，拉取整天并合并进题库")
+    ap.add_argument(
+        "--before",
+        default="",
+        help="YYYY-MM-DD / yesterday：只取该日 0 点之前（还没做的更早史）",
+    )
+    ap.add_argument(
+        "--records-only",
+        action="store_true",
+        help="只要合并转发（chat_record）；记录为主时用",
+    )
+    ap.add_argument(
+        "--records-first",
+        action="store_true",
+        help="排序：聊天记录在前，单条在后（同组内新→旧）",
+    )
     ap.add_argument("--replace", action="store_true", help="只用这次结果，不和旧题合并")
+    ap.add_argument("--soft-limit", type=int, default=0, help="历史翻页软上限，0=自动")
     args = ap.parse_args()
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     MEDIA_DIR.mkdir(parents=True, exist_ok=True)
 
     min_time = max_time = None
+    mode = "latest"
     if args.day:
+        mode = "day"
         min_time, max_time = day_range(args.day)
         print(f"拉取整天 {args.day} → [{min_time}, {max_time})")
-        raw = fetch_raw_until(min_time=min_time, soft_limit=2000)
+        soft = args.soft_limit or 2000
+        raw = fetch_raw_until(min_time=min_time, soft_limit=soft)
         raw = [m for m in raw if min_time <= int(m.get("time") or 0) < max_time]
         print(f"当天原始消息 {len(raw)} 条")
+    elif args.before:
+        mode = "before"
+        max_time, _ = day_range(args.before)
+        print(f"拉取 {args.before} 之前 → time < {max_time}")
+        soft = args.soft_limit or 4000
+        # 一直往更早翻到软上限/墙，再截断到 before 日 0 点前
+        raw = fetch_raw_until(min_time=0, soft_limit=soft)
+        raw = [m for m in raw if int(m.get("time") or 0) < max_time]
+        print(f"更早原始消息 {len(raw)} 条")
     else:
         print("拉取源群最近历史…")
-        raw = fetch_raw_until(min_time=None, soft_limit=max(120, args.count * 4))
+        soft = args.soft_limit or max(120, args.count * 4)
+        raw = fetch_raw_until(min_time=None, soft_limit=soft)
         raw = list(reversed(raw))  # 新→旧筛
         print(f"原始 {len(raw)} 条")
 
     print("组装条目…")
     new_items: list[dict] = []
-    source_msgs = raw if args.day else raw
-    if not args.day:
-        # 新→旧取 count
+    if mode == "latest":
         picked = []
-        for msg in source_msgs:
+        for msg in raw:
             if should_skip(msg):
                 continue
             item = msg_to_item(msg)
             if not item:
+                continue
+            if args.records_only and item.get("kind") != "chat_record":
                 continue
             picked.append(item)
             print(
@@ -395,12 +424,14 @@ def main():
                 break
         new_items = picked
     else:
-        # 整天：旧→新排，便于审
-        for msg in source_msgs:
+        # day / before：旧→新便于审；记录为主可再排
+        for msg in raw:
             if should_skip(msg):
                 continue
             item = msg_to_item(msg)
             if not item:
+                continue
+            if args.records_only and item.get("kind") != "chat_record":
                 continue
             new_items.append(item)
             print(
@@ -408,7 +439,8 @@ def main():
                 f"lines={len(item['thread'])} types={item['types']}"
             )
 
-    if args.replace or not args.day:
+    merge = not args.replace and mode in ("day", "before")
+    if not merge:
         items = new_items
     else:
         existing = load_existing_items()
@@ -420,12 +452,19 @@ def main():
                 added += 1
             else:
                 by_id[it["id"]] = it  # 用新方法覆盖
-        items = sorted(
-            by_id.values(),
-            key=lambda m: (int(m.get("time") or 0), int(m.get("message_id") or 0)),
-            reverse=True,
-        )
-        print(f"合并：新增/覆盖 {len(new_items)}，其中新 id {added}，合计 {len(items)}")
+        items = list(by_id.values())
+        print(f"合并：本次 {len(new_items)}，新 id {added}，合计 {len(items)}")
+
+    def sort_key(m):
+        t = int(m.get("time") or 0)
+        mid = int(m.get("message_id") or 0)
+        if args.records_first:
+            # 记录在前，组内新→旧
+            pri = 0 if m.get("kind") == "chat_record" else 1
+            return (pri, -t, -mid)
+        return (-t, -mid)
+
+    items = sorted(items, key=sort_key)
 
     for i, it in enumerate(items, start=1):
         it["index"] = i
@@ -435,7 +474,9 @@ def main():
         "generated_at": int(time.time()),
         "count": len(items),
         "day": args.day or None,
-        "note": "纯图文平铺；合并转发=聊天记录视图",
+        "before": args.before or None,
+        "records_only": bool(args.records_only),
+        "note": "纯图文平铺；合并转发=聊天记录视图；记录为主可 records-first",
         "items": items,
     }
     OUT_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
