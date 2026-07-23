@@ -552,6 +552,7 @@ document.getElementById("btnReset").addEventListener("click", () => {
 });
 
 window.addEventListener("keydown", (e) => {
+  if (gallery.open) return;
   if (e.target.matches("input, textarea")) return;
   if (e.key >= "1" && e.key <= "5") rate(Number(e.key));
   if (e.key === "ArrowRight" || e.key === "s") rate(0, true);
