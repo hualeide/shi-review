@@ -1,34 +1,35 @@
 :root {
-  --bg: #12110f;
-  --panel: #1c1b18;
-  --line: #2e2c27;
-  --text: #f2efe8;
-  --muted: #9a9488;
-  --accent: #e8a54b;
+  --bg: #0e1013;
+  --panel: #1a1d22;
+  --chat-bg: #111318;
+  --line: #2a2f38;
+  --text: #e8eaed;
+  --muted: #8b93a0;
+  --bubble: #252a33;
+  --bubble-text: #e8eaed;
+  --accent: #5b8def;
   --good: #6fbf73;
   --bad: #d66757;
+  --name: #9eb6e8;
 }
 
 * { box-sizing: border-box; }
 html, body {
   margin: 0;
   min-height: 100%;
-  background:
-    radial-gradient(1200px 600px at 10% -10%, #2a2418 0%, transparent 55%),
-    radial-gradient(900px 500px at 100% 0%, #1a2220 0%, transparent 50%),
-    var(--bg);
+  background: var(--bg);
   color: var(--text);
-  font-family: "IBM Plex Sans", sans-serif;
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
 .app {
   max-width: 720px;
   margin: 0 auto;
-  padding: 20px 16px 40px;
+  padding: 16px 12px 36px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .top {
@@ -36,108 +37,135 @@ html, body {
   justify-content: space-between;
   align-items: baseline;
   gap: 12px;
+  padding: 4px 4px 10px;
   border-bottom: 1px solid var(--line);
-  padding-bottom: 12px;
 }
 
-.brand {
-  font-size: 1.35rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-.meta {
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 0.85rem;
-  color: var(--muted);
-}
+.brand { font-size: 1.2rem; font-weight: 600; }
+.meta { font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 
 .stage {
   flex: 1;
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 18px;
-  min-height: 420px;
+  border-radius: 14px;
+  overflow: hidden;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
 }
 
 .loading, .done {
   color: var(--muted);
   line-height: 1.6;
+  padding: 24px;
 }
 
-.item-head {
+.chat-head {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  background: #161920;
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  margin-bottom: 12px;
-  font-size: 0.9rem;
-  color: var(--muted);
+  align-items: center;
 }
 
-.item-head strong { color: var(--text); font-weight: 500; }
+.chat-head h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
 
-.tags {
+.chat-head .sub {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+
+.chat-thread {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--chat-bg);
+  padding: 14px 12px 20px;
+  max-height: min(62vh, 640px);
+}
+
+.msg {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  gap: 10px;
   margin-bottom: 14px;
+  align-items: flex-start;
 }
 
-.tag {
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 0.75rem;
-  border: 1px solid var(--line);
-  padding: 2px 8px;
-  border-radius: 999px;
-  color: var(--muted);
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #3a4660, #2a3348);
+  color: #d7e0f5;
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  flex-shrink: 0;
 }
 
-.body-text {
+.msg-body { min-width: 0; max-width: calc(100% - 46px); }
+
+.msg-meta {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin-bottom: 4px;
+  font-size: 0.78rem;
+}
+
+.msg-meta .name { color: var(--name); font-weight: 500; }
+.msg-meta .time { color: var(--muted); }
+
+.bubble {
+  display: inline-block;
+  background: var(--bubble);
+  color: var(--bubble-text);
+  border-radius: 4px 12px 12px 12px;
+  padding: 8px 11px;
+  line-height: 1.5;
+  font-size: 0.95rem;
   white-space: pre-wrap;
   word-break: break-word;
-  line-height: 1.55;
-  margin: 0 0 14px;
-  font-size: 1.05rem;
+  max-width: 100%;
 }
 
-.media {
+.bubble:empty { display: none; }
+
+.msg-media {
+  margin-top: 6px;
   display: grid;
-  gap: 10px;
+  gap: 6px;
 }
 
-.media img, .media video {
-  width: 100%;
-  max-height: 520px;
-  object-fit: contain;
-  background: #0b0b0a;
+.msg-media img,
+.msg-media video {
+  max-width: min(100%, 320px);
+  max-height: 360px;
   border-radius: 8px;
+  background: #0a0c10;
   border: 1px solid var(--line);
-}
-
-.forward-box {
-  margin-top: 8px;
-  padding: 12px;
-  border-left: 3px solid var(--accent);
-  background: #161410;
-  color: var(--muted);
-  white-space: pre-wrap;
-  font-size: 0.92rem;
-  line-height: 1.5;
+  display: block;
 }
 
 .score-bar {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  align-items: stretch;
 }
 
 .hint {
   margin: 0;
   text-align: center;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
 }
 
 #syncStatus[data-ok="1"] { color: var(--good); }
@@ -152,22 +180,17 @@ html, body {
 .scores button {
   appearance: none;
   border: 1px solid var(--line);
-  background: #24221c;
+  background: #222830;
   color: var(--text);
   font: inherit;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  padding: 14px 0;
+  padding: 12px 0;
   border-radius: 10px;
   cursor: pointer;
-  transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
 }
 
-.scores button:hover {
-  border-color: var(--accent);
-  transform: translateY(-1px);
-}
-
+.scores button:hover { border-color: var(--accent); }
 .scores button[data-score="1"] { color: #e28b7a; }
 .scores button[data-score="5"] { color: var(--good); }
 
@@ -178,7 +201,7 @@ html, body {
   flex-wrap: wrap;
 }
 
-button.ghost, .foot button {
+button.ghost, .foot button, a.ghost {
   appearance: none;
   border: 1px solid var(--line);
   background: transparent;
@@ -187,23 +210,37 @@ button.ghost, .foot button {
   padding: 10px 14px;
   border-radius: 8px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .foot button:not(.ghost) {
   background: var(--accent);
-  color: #1a1408;
+  color: #fff;
   border-color: transparent;
   font-weight: 600;
 }
 
 .current-score {
-  margin-top: 10px;
+  margin: 8px 14px 12px;
   color: var(--accent);
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+}
+
+.tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-size: 0.72rem;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 1px 7px;
+  border-radius: 999px;
 }
 
 @media (max-width: 520px) {
-  .stage { min-height: 360px; padding: 14px; }
-  .scores button { padding: 12px 0; font-size: 1.1rem; }
+  .chat-thread { max-height: 55vh; }
+  .msg-media img, .msg-media video { max-width: 100%; }
 }

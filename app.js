@@ -1,4 +1,4 @@
-const STORAGE_KEY = "shi-review-scores-v1";
+const STORAGE_KEY = "shi-review-scores-v2";
 const REVIEWER_KEY = "shi-reviewer-name";
 
 const stage = document.getElementById("stage");
@@ -33,9 +33,34 @@ function ensureReviewer() {
 }
 
 function mediaSrc(m) {
-  if (m.local) return m.local;
-  if (m.url) return m.url;
-  return "";
+  return m.local || m.url || "";
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function avatarChar(name) {
+  const s = String(name || "?").trim();
+  return s ? s[0] : "?";
+}
+
+function fmtTime(ts) {
+  if (!ts) return "";
+  try {
+    return new Date(Number(ts) * 1000).toLocaleString("zh-CN", {
+      month: "numeric",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return "";
+  }
 }
 
 function setSync(text, ok) {
@@ -50,7 +75,6 @@ async function submitScoreRemote(payload) {
   let ok = false;
   let detail = [];
 
-  // 1) GitHub Issue 评论（自动回收主通道）
   if (cfg.token && cfg.repo && cfg.issueNumber) {
     try {
       const res = await fetch(
@@ -69,15 +93,12 @@ async function submitScoreRemote(payload) {
       if (res.ok) {
         ok = true;
         detail.push("GitHub");
-      } else {
-        detail.push("GitHub:" + res.status);
-      }
-    } catch (e) {
+      } else detail.push("GitHub:" + res.status);
+    } catch {
       detail.push("GitHub网络失败");
     }
   }
 
-  // 2) ntfy 备份
   if (cfg.ntfyTopic) {
     try {
       const res = await fetch(`https://ntfy.sh/${cfg.ntfyTopic}`, {
@@ -88,9 +109,7 @@ async function submitScoreRemote(payload) {
       if (res.ok) {
         ok = true;
         detail.push("ntfy");
-      } else {
-        detail.push("ntfy:" + res.status);
-      }
+      } else detail.push("ntfy:" + res.status);
     } catch {
       detail.push("ntfy失败");
     }
@@ -99,53 +118,64 @@ async function submitScoreRemote(payload) {
   return { ok, detail: detail.join("+") || "无通道" };
 }
 
-function renderItem(item) {
-  const tags = (item.types || []).map((t) => `<span class="tag">${t}</span>`).join("");
-  const when = item.time
-    ? new Date(Number(item.time) * 1000).toLocaleString("zh-CN")
-    : "";
-  const mediaHtml = (item.media || [])
+function renderThreadLine(line) {
+  const mediaHtml = (line.media || [])
     .map((m) => {
       const src = mediaSrc(m);
       if (m.type === "image") {
-        if (!src) return `<p class="loading">[图片加载失败]</p>`;
-        return `<img src="${src}" alt="" loading="lazy" />`;
+        return src
+          ? `<img src="${src}" alt="" loading="lazy" />`
+          : `<span class="hint">[图片]</span>`;
       }
       if (m.type === "video") {
-        if (!src) return `<p class="loading">[视频暂无本地文件：${m.file || ""}]</p>`;
-        return `<video src="${src}" controls playsinline></video>`;
+        return src
+          ? `<video src="${src}" controls playsinline></video>`
+          : `<span class="hint">[视频]</span>`;
       }
       return "";
     })
     .join("");
 
-  const fromFwd = item.from_forward
-    ? `<span class="tag">拆自打包</span>`
-    : "";
+  return `
+    <div class="msg">
+      <div class="avatar">${escapeHtml(avatarChar(line.sender))}</div>
+      <div class="msg-body">
+        <div class="msg-meta">
+          <span class="name">${escapeHtml(line.sender || "")}</span>
+          <span class="time">${escapeHtml(fmtTime(line.time))}</span>
+        </div>
+        ${line.text ? `<div class="bubble">${escapeHtml(line.text)}</div>` : ""}
+        ${mediaHtml ? `<div class="msg-media">${mediaHtml}</div>` : ""}
+      </div>
+    </div>
+  `;
+}
 
+function renderItem(item) {
+  const thread = item.thread || [];
+  const kindLabel = item.kind === "chat_record" ? "聊天记录" : "单条";
+  const when = fmtTime(item.time);
   const prev = scores[item.id];
   const prevLine = prev
     ? `<div class="current-score">已打：${prev.score}${prev.skip ? "（跳过）" : ""}</div>`
     : "";
 
   stage.innerHTML = `
-    <div class="item-head">
-      <span><strong>${item.index}</strong> / ${items.length} · ${escapeHtml(item.sender || "")}</span>
-      <span>${escapeHtml(when)}</span>
+    <div class="chat-head">
+      <div>
+        <h2>${escapeHtml(item.title || kindLabel)}</h2>
+        <div class="sub">${item.index} / ${items.length} · 来自 ${escapeHtml(item.sender || "")} · ${escapeHtml(when)}</div>
+      </div>
+      <div class="tags">
+        <span class="tag">${kindLabel}</span>
+        <span class="tag">${thread.length} 条消息</span>
+      </div>
     </div>
-    <div class="tags">${tags || '<span class="tag">unknown</span>'}${fromFwd}</div>
-    ${item.text ? `<p class="body-text">${escapeHtml(item.text)}</p>` : ""}
-    <div class="media">${mediaHtml || (item.text ? "" : '<p class="loading">无媒体</p>')}</div>
+    <div class="chat-thread" id="chatThread">
+      ${thread.map(renderThreadLine).join("") || '<p class="loading">空记录</p>'}
+    </div>
     ${prevLine}
   `;
-}
-
-function escapeHtml(s) {
-  return String(s)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
 }
 
 function updateMeta() {
@@ -160,8 +190,8 @@ function showDone() {
   stage.innerHTML = `
     <div class="done">
       <p><strong>本轮审完</strong></p>
-      <p>共 ${items.length} 条，已记录 ${Object.keys(scores).length} 条，均分 ${avg}</p>
-      <p>打分已自动回收到 <a href="scores.html">汇总页</a> / GitHub Issue。</p>
+      <p>共 ${items.length} 份聊天记录，已记录 ${Object.keys(scores).length}，均分 ${avg}</p>
+      <p>打分已自动回收 · <a href="scores.html" style="color:var(--accent)">看汇总</a></p>
     </div>
   `;
   meta.textContent = `完成 · 已评 ${Object.keys(scores).length}`;
@@ -190,11 +220,13 @@ async function rate(score, skip = false) {
   const payload = {
     id: item.id,
     message_id: item.message_id,
+    kind: item.kind,
     score: skip ? 0 : score,
     skip: !!skip,
     reviewer,
     at: Date.now(),
-    text_preview: (item.text || "").slice(0, 80),
+    title: item.title || "",
+    lines: (item.thread || []).length,
   };
   scores[item.id] = payload;
   saveScores();

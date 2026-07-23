@@ -1,4 +1,4 @@
-"""从源群拉取最新史，合并转发拆成单条可审条目，落盘 data/items.json + media/。"""
+"""拉取最新 N 条史：合并转发保留为「一条聊天记录」，内含完整对话线程。"""
 
 from __future__ import annotations
 
@@ -74,12 +74,11 @@ def forward_id_from_segs(segs) -> str | None:
     return None
 
 
-def extract_media_from_segs(segs, item_id: str) -> list[dict]:
+def media_from_segs(segs, prefix: str) -> list[dict]:
     media: list[dict] = []
     if not isinstance(segs, list):
         return media
-    img_i = 0
-    vid_i = 0
+    img_i = vid_i = 0
     for seg in segs:
         if not isinstance(seg, dict):
             continue
@@ -88,7 +87,7 @@ def extract_media_from_segs(segs, item_id: str) -> list[dict]:
         if t == "image":
             img_i += 1
             url = data.get("url") or ""
-            local = MEDIA_DIR / f"{item_id}_img{img_i}.jpg"
+            local = MEDIA_DIR / f"{prefix}_img{img_i}.jpg"
             ok = download(str(url), local) if str(url).startswith("http") else False
             media.append(
                 {
@@ -100,7 +99,7 @@ def extract_media_from_segs(segs, item_id: str) -> list[dict]:
         elif t == "video":
             vid_i += 1
             url = data.get("url") or ""
-            local = MEDIA_DIR / f"{item_id}_vid{vid_i}.mp4"
+            local = MEDIA_DIR / f"{prefix}_vid{vid_i}.mp4"
             ok = download(str(url), local) if str(url).startswith("http") else False
             media.append(
                 {
@@ -126,6 +125,35 @@ def get_forward_nodes(fid: str) -> list[dict]:
         if isinstance(nodes, list) and nodes:
             return nodes
     return []
+
+
+def node_to_line(node: dict, prefix: str, depth: int = 0) -> list[dict]:
+    """把一个转发节点变成聊天行；若仍是嵌套转发则展开为多行。"""
+    segs = node.get("message") or []
+    nested = forward_id_from_segs(segs)
+    if nested and depth < 3:
+        lines: list[dict] = []
+        for i, child in enumerate(get_forward_nodes(nested)):
+            lines.extend(node_to_line(child, f"{prefix}_n{i}", depth + 1))
+        return lines
+
+    text = text_from_segs(segs)
+    if not text:
+        raw = str(node.get("raw_message") or "")
+        text = re.sub(r"\[CQ:.*?\]", "", raw).strip()
+    media = media_from_segs(segs, prefix)
+    if not text and not media:
+        return []
+    sender = ((node.get("sender") or {}).get("nickname")) or str(node.get("user_id") or "用户")
+    return [
+        {
+            "sender": sender,
+            "user_id": node.get("user_id"),
+            "time": node.get("time"),
+            "text": text[:2000],
+            "media": media,
+        }
+    ]
 
 
 def fetch_recent_raw(limit: int = 80) -> list[dict]:
@@ -172,89 +200,76 @@ def fetch_recent_raw(limit: int = 80) -> list[dict]:
     )
 
 
-def should_skip_top(msg: dict) -> bool:
+def should_skip(msg: dict) -> bool:
     if int(msg.get("user_id") or 0) == SELF_QQ:
         return True
     raw = str(msg.get("raw_message") or "")
     return any(m in raw for m in SKIP_MARKERS)
 
 
-def node_to_item(node: dict, item_id: str, parent: dict | None = None) -> dict | None:
-    segs = node.get("message") or []
-    # 若节点本身还是合并转发，继续拆
-    nested_fid = forward_id_from_segs(segs)
-    if nested_fid:
-        return None  # 由调用方展开
+def msg_to_item(msg: dict) -> dict | None:
+    mid = int(msg.get("message_id") or 0)
+    segs = msg.get("message") or []
+    fid = forward_id_from_segs(segs)
+    sender = ((msg.get("sender") or {}).get("nickname")) or str(msg.get("user_id") or "")
 
+    if fid:
+        nodes = get_forward_nodes(fid)
+        print(f"  chat-record {mid}: forward {fid} -> {len(nodes)} nodes")
+        thread: list[dict] = []
+        for i, node in enumerate(nodes):
+            thread.extend(node_to_line(node, f"rec_{mid}_{i}"))
+        if not thread:
+            return None
+        return {
+            "id": f"shi_{mid}",
+            "kind": "chat_record",
+            "message_id": mid,
+            "real_seq": msg.get("real_seq"),
+            "time": msg.get("time"),
+            "user_id": msg.get("user_id"),
+            "sender": sender,
+            "title": f"聊天记录（{len(thread)}条）",
+            "forward_id": fid,
+            "thread": thread,
+            "types": ["forward"],
+        }
+
+    # 单条图/文/视频：也包成一条「迷你聊天」方便统一渲染
+    prefix = f"shi_{mid}"
     text = text_from_segs(segs)
     if not text:
-        raw = str(node.get("raw_message") or "")
+        raw = str(msg.get("raw_message") or "")
         text = re.sub(r"\[CQ:.*?\]", "", raw).strip()
-
-    media = extract_media_from_segs(segs, item_id)
-    types: list[str] = []
+    media = media_from_segs(segs, prefix)
+    if not text and not media:
+        return None
+    types = []
     if text:
         types.append("text")
     for m in media:
         if m["type"] not in types:
             types.append(m["type"])
-
-    if not types:
-        return None
-
-    sender = ((node.get("sender") or {}).get("nickname")) or str(node.get("user_id") or "")
     return {
-        "id": item_id,
-        "message_id": int(node.get("message_id") or 0),
-        "real_seq": node.get("real_seq"),
-        "time": node.get("time"),
-        "user_id": node.get("user_id"),
+        "id": prefix,
+        "kind": "single",
+        "message_id": mid,
+        "real_seq": msg.get("real_seq"),
+        "time": msg.get("time"),
+        "user_id": msg.get("user_id"),
         "sender": sender,
+        "title": sender or "单条消息",
+        "thread": [
+            {
+                "sender": sender,
+                "user_id": msg.get("user_id"),
+                "time": msg.get("time"),
+                "text": text[:2000],
+                "media": media,
+            }
+        ],
         "types": types,
-        "text": text[:2000],
-        "media": media,
-        "from_forward": (parent or {}).get("message_id"),
-        "parent_sender": ((parent or {}).get("sender") or {}).get("nickname")
-        if parent
-        else None,
     }
-
-
-def expand_message(msg: dict, depth: int = 0) -> list[dict]:
-    """把一条群消息展开成可审叶子条目（合并转发拆开）。"""
-    if depth > 4:
-        return []
-    segs = msg.get("message") or []
-    fid = forward_id_from_segs(segs)
-    out: list[dict] = []
-    if fid:
-        nodes = get_forward_nodes(fid)
-        print(f"  expand forward {fid}: {len(nodes)} nodes")
-        for i, node in enumerate(nodes):
-            nested = forward_id_from_segs(node.get("message") or [])
-            if nested:
-                # 伪造成一条消息再递归
-                fake = {
-                    "message_id": node.get("message_id"),
-                    "message": node.get("message"),
-                    "sender": node.get("sender"),
-                    "user_id": node.get("user_id"),
-                    "time": node.get("time"),
-                    "real_seq": node.get("real_seq"),
-                    "raw_message": node.get("raw_message"),
-                }
-                out.extend(expand_message(fake, depth + 1))
-                continue
-            mid = int(node.get("message_id") or 0) or i
-            item_id = f"fwd_{fid}_{mid}"
-            item = node_to_item(node, item_id, parent=msg)
-            if item:
-                out.append(item)
-        return out
-
-    mid = int(msg.get("message_id") or 0)
-    item = node_to_item(msg, f"shi_{mid}", parent=None)
-    return [item] if item else []
 
 
 def main():
@@ -263,29 +278,20 @@ def main():
 
     print("拉取源群历史…")
     raw = fetch_recent_raw(120)
-    print(f"原始 {len(raw)} 条，拆包提取中…")
+    print(f"原始 {len(raw)} 条，组装聊天记录…")
 
     items: list[dict] = []
-    seen: set[str] = set()
-
-    for msg in reversed(raw):  # 新→旧
-        if should_skip_top(msg):
+    for msg in reversed(raw):
+        if should_skip(msg):
             continue
-        leaves = expand_message(msg)
-        for leaf in leaves:
-            if not leaf or leaf["id"] in seen:
-                continue
-            # 跳过纯空
-            if not leaf.get("text") and not leaf.get("media"):
-                continue
-            seen.add(leaf["id"])
-            items.append(leaf)
-            print(
-                f"[{len(items)}] {leaf['id']} types={leaf['types']} "
-                f"media={len(leaf['media'])} text={str(leaf.get('text') or '')[:40]!r}"
-            )
-            if len(items) >= TARGET_COUNT:
-                break
+        item = msg_to_item(msg)
+        if not item:
+            continue
+        items.append(item)
+        print(
+            f"[{len(items)}] {item['id']} kind={item['kind']} "
+            f"lines={len(item['thread'])} types={item['types']}"
+        )
         if len(items) >= TARGET_COUNT:
             break
 
@@ -296,7 +302,7 @@ def main():
         "source_group": str(SOURCE),
         "generated_at": int(time.time()),
         "count": len(items),
-        "note": "合并转发已拆成单条；每条单独打分",
+        "note": "每条史=一份聊天记录视图，合并转发不拆成多条打分",
         "items": items,
     }
     OUT_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
