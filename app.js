@@ -73,6 +73,34 @@ function fmtTime(ts) {
   }
 }
 
+let gallery = {
+  open: false,
+  list: [],
+  index: 0,
+  scale: 1,
+  tx: 0,
+  ty: 0,
+  dragging: false,
+  startX: 0,
+  startY: 0,
+  lastTx: 0,
+  lastTy: 0,
+  pinchStart: 0,
+  scaleStart: 1,
+};
+
+function collectItemImages(item) {
+  const list = [];
+  for (const line of item?.thread || []) {
+    for (const m of line.media || []) {
+      if (m.type !== "image") continue;
+      const src = mediaSrc(m);
+      if (src) list.push(src);
+    }
+  }
+  return list;
+}
+
 function ensureLightbox() {
   let box = document.getElementById("lightbox");
   if (box) return box;
@@ -80,35 +108,196 @@ function ensureLightbox() {
   box.id = "lightbox";
   box.hidden = true;
   box.innerHTML = `
-    <button type="button" class="lightbox-close" aria-label="关闭">×</button>
-    <img alt="" />
+    <div class="lb-top">
+      <span class="lb-counter" id="lbCounter"></span>
+      <button type="button" class="lightbox-close" aria-label="关闭">×</button>
+    </div>
+    <button type="button" class="lb-nav lb-prev" aria-label="上一张">‹</button>
+    <button type="button" class="lb-nav lb-next" aria-label="下一张">›</button>
+    <div class="lb-stage" id="lbStage">
+      <img id="lbImg" alt="" draggable="false" />
+    </div>
+    <div class="lb-hint">左右滑切换 · 双击/滚轮放大 · Esc 关闭</div>
   `;
   document.body.appendChild(box);
+
+  box.querySelector(".lightbox-close").addEventListener("click", closeLightbox);
+  box.querySelector(".lb-prev").addEventListener("click", (e) => {
+    e.stopPropagation();
+    galleryNav(-1);
+  });
+  box.querySelector(".lb-next").addEventListener("click", (e) => {
+    e.stopPropagation();
+    galleryNav(1);
+  });
   box.addEventListener("click", (e) => {
-    if (e.target === box || e.target.classList.contains("lightbox-close")) {
-      closeLightbox();
+    if (e.target === box || e.target.id === "lbStage") closeLightbox();
+  });
+
+  const stageEl = box.querySelector("#lbStage");
+  const img = box.querySelector("#lbImg");
+
+  img.addEventListener("click", (e) => e.stopPropagation());
+  img.addEventListener("dblclick", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (gallery.scale > 1.05) resetZoom();
+    else setZoom(2.5, e.clientX, e.clientY);
+  });
+
+  // wheel zoom
+  stageEl.addEventListener(
+    "wheel",
+    (e) => {
+      if (!gallery.open) return;
+      e.preventDefault();
+      const next = gallery.scale * (e.deltaY < 0 ? 1.12 : 1 / 1.12);
+      setZoom(next, e.clientX, e.clientY);
+    },
+    { passive: false }
+  );
+
+  // pointer / swipe
+  let pointers = new Map();
+  stageEl.addEventListener("pointerdown", (e) => {
+    if (!gallery.open) return;
+    stageEl.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size === 1) {
+      gallery.dragging = true;
+      gallery.startX = e.clientX;
+      gallery.startY = e.clientY;
+      gallery.lastTx = gallery.tx;
+      gallery.lastTy = gallery.ty;
+    } else if (pointers.size === 2) {
+      const pts = [...pointers.values()];
+      gallery.pinchStart = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      gallery.scaleStart = gallery.scale;
     }
   });
+  stageEl.addEventListener("pointermove", (e) => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size === 2) {
+      const pts = [...pointers.values()];
+      const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      if (gallery.pinchStart > 0) {
+        setZoom(gallery.scaleStart * (dist / gallery.pinchStart));
+      }
+      return;
+    }
+    if (!gallery.dragging) return;
+    const dx = e.clientX - gallery.startX;
+    const dy = e.clientY - gallery.startY;
+    if (gallery.scale > 1.05) {
+      gallery.tx = gallery.lastTx + dx;
+      gallery.ty = gallery.lastTy + dy;
+      applyTransform();
+    }
+  });
+  const endPointer = (e) => {
+    if (!pointers.has(e.pointerId)) return;
+    const wasDrag = gallery.dragging && pointers.size === 1;
+    const dx = e.clientX - gallery.startX;
+    const dy = e.clientY - gallery.startY;
+    pointers.delete(e.pointerId);
+    if (pointers.size < 2) gallery.pinchStart = 0;
+    if (pointers.size === 0) gallery.dragging = false;
+    if (wasDrag && gallery.scale <= 1.05) {
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+        galleryNav(dx < 0 ? 1 : -1);
+      } else if (Math.abs(dy) > 100 && Math.abs(dy) > Math.abs(dx) * 1.2 && dy > 0) {
+        closeLightbox();
+      }
+    }
+  };
+  stageEl.addEventListener("pointerup", endPointer);
+  stageEl.addEventListener("pointercancel", endPointer);
+
   document.addEventListener("keydown", (e) => {
+    if (!gallery.open) return;
     if (e.key === "Escape") closeLightbox();
+    if (e.key === "ArrowRight") galleryNav(1);
+    if (e.key === "ArrowLeft") galleryNav(-1);
+    if (e.key === "+" || e.key === "=") setZoom(gallery.scale * 1.2);
+    if (e.key === "-") setZoom(gallery.scale / 1.2);
+    if (e.key === "0") resetZoom();
   });
   return box;
 }
 
-function openLightbox(src) {
-  if (!src) return;
+function applyTransform() {
+  const img = document.getElementById("lbImg");
+  if (!img) return;
+  img.style.transform = `translate(${gallery.tx}px, ${gallery.ty}px) scale(${gallery.scale})`;
+}
+
+function resetZoom() {
+  gallery.scale = 1;
+  gallery.tx = 0;
+  gallery.ty = 0;
+  applyTransform();
+}
+
+function setZoom(scale, clientX, clientY) {
+  const next = Math.min(4, Math.max(1, scale));
+  if (next === 1) {
+    resetZoom();
+    return;
+  }
+  // 简单缩放：以中心为准
+  gallery.scale = next;
+  applyTransform();
+}
+
+function showGalleryImage() {
   const box = ensureLightbox();
-  const img = box.querySelector("img");
+  const img = box.querySelector("#lbImg");
+  const counter = box.querySelector("#lbCounter");
+  const src = gallery.list[gallery.index];
+  if (!src) return;
+  resetZoom();
   img.src = src;
+  counter.textContent = `${gallery.index + 1} / ${gallery.list.length}`;
+  box.querySelector(".lb-prev").disabled = gallery.index <= 0;
+  box.querySelector(".lb-next").disabled = gallery.index >= gallery.list.length - 1;
+}
+
+function galleryNav(delta) {
+  const next = gallery.index + delta;
+  if (next < 0 || next >= gallery.list.length) return;
+  gallery.index = next;
+  showGalleryImage();
+}
+
+function openLightbox(src, list) {
+  const images = list && list.length ? list : src ? [src] : [];
+  if (!images.length) return;
+  let index = Math.max(0, images.indexOf(src));
+  if (src && index < 0) {
+    images.unshift(src);
+    index = 0;
+  }
+  gallery.open = true;
+  gallery.list = images;
+  gallery.index = index;
+  const box = ensureLightbox();
   box.hidden = false;
   document.body.style.overflow = "hidden";
+  showGalleryImage();
 }
 
 function closeLightbox() {
   const box = document.getElementById("lightbox");
   if (!box) return;
+  gallery.open = false;
+  gallery.list = [];
   box.hidden = true;
-  box.querySelector("img").src = "";
+  const img = box.querySelector("#lbImg");
+  if (img) {
+    img.src = "";
+    img.style.transform = "";
+  }
   document.body.style.overflow = "";
 }
 
@@ -202,10 +391,11 @@ function renderThreadLine(line) {
 }
 
 function bindZoomables(root) {
+  const list = collectItemImages(items[cursor]);
   root.querySelectorAll("img.zoomable").forEach((img) => {
     img.addEventListener("click", (e) => {
       e.preventDefault();
-      openLightbox(img.dataset.full || img.src);
+      openLightbox(img.dataset.full || img.src, list);
     });
   });
 }
