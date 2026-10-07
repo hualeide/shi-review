@@ -15,25 +15,40 @@ let cursor = -1;
 let mode = "sheet"; // sheet | detail
 let filter = "record";
 let scores = loadScores();
-let reviewer = localStorage.getItem(REVIEWER_KEY) || "";
+let reviewer = "";
+try {
+  reviewer = localStorage.getItem(REVIEWER_KEY) || "";
+} catch {
+  reviewer = "";
+}
 
 function loadScores() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    return raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {};
   } catch {
     return {};
   }
 }
 
 function saveScores() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function ensureReviewer() {
   if (reviewer) return reviewer;
   const name = prompt("你的昵称（打分会记在你名下）:", "") || "anonymous";
   reviewer = String(name).trim() || "anonymous";
-  localStorage.setItem(REVIEWER_KEY, reviewer);
+  try {
+    localStorage.setItem(REVIEWER_KEY, reviewer);
+  } catch {
+    /* 昵称留在本页 */
+  }
   return reviewer;
 }
 
@@ -45,7 +60,7 @@ function mediaAttrs(m) {
   const src = mediaSrc(m);
   if (!src) return "";
   const fb = m.local && m.url ? ` data-fallback="${escapeHtml(m.url)}"` : "";
-  return `src="${src}"${fb}`;
+  return `src="${escapeHtml(src)}"${fb}`;
 }
 
 function escapeHtml(s) {
@@ -419,7 +434,7 @@ function renderThreadLine(line, prevLine) {
       const src = mediaSrc(m);
       if (m.type === "image") {
         return src
-          ? `<img class="zoomable cl-img" ${mediaAttrs(m)} alt="" loading="lazy" data-full="${src}" />`
+          ? `<img class="zoomable cl-img" ${mediaAttrs(m)} alt="" loading="lazy" data-full="${escapeHtml(src)}" />`
           : `<span class="cl-hint">[图片]</span>`;
       }
       if (m.type === "video") {
@@ -486,7 +501,7 @@ function renderSimpleItem(item) {
       const src = mediaSrc(m);
       if (m.type === "image") {
         return src
-          ? `<img class="zoomable simple-media" ${mediaAttrs(m)} alt="" loading="lazy" data-full="${src}" />`
+          ? `<img class="zoomable simple-media" ${mediaAttrs(m)} alt="" loading="lazy" data-full="${escapeHtml(src)}" />`
           : `<p class="loading">[图片加载失败]</p>`;
       }
       if (m.type === "video") {
@@ -608,11 +623,7 @@ function renderSheet() {
     } else {
       const cls = thumbs.length === 1 ? "cell-thumb one" : "cell-thumb";
       thumbHtml = `<div class="${cls}">${thumbs
-        .map((m) => {
-          const src = mediaSrc(m);
-          const fb = m.local && m.url ? ` data-fallback="${escapeHtml(m.url)}"` : "";
-          return `<img src="${src}"${fb} alt="" loading="lazy" />`;
-        })
+        .map((m) => `<img ${mediaAttrs(m)} alt="" loading="lazy" />`)
         .join("")}</div>`;
     }
 
@@ -708,14 +719,16 @@ async function rate(score, skip = false) {
     lines: (item.thread || []).length,
   };
   scores[item.id] = payload;
-  saveScores();
-  setSync("已标记", true);
+  const saved = saveScores();
+  if (saved) setSync("已标记", true);
+  else setSync("仅本页 · 未保存", false);
   // 标记后仍停在本条，方便归档浏览；不强制跳下一条
   const mark = stage.querySelector(".current-score");
   const html = `已标：${payload.score}${payload.skip ? "（跳过）" : ""}`;
   if (mark) mark.textContent = html;
   else stage.insertAdjacentHTML("beforeend", `<div class="current-score">${html}</div>`);
   submitScoreRemote(payload).then((result) => {
+    if (!saved) return;
     if (!result.ok) setSync(`后台失败 · ${result.detail}`, false);
   });
 }
